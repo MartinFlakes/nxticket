@@ -77,26 +77,44 @@ export default {
   },
   methods: {
     login() {
-      console.log(`Email: ${this.email}, Password: ${this.password}`);
+      if (this.email && this.password) {
+        this.$router.push({ name: 'UserView' }); // Redirigir a la vista del usuario
+      } else {
+        alert("Por favor, ingresa tu correo y contraseña.");
+      }
     },
     register() {
-      console.log(`Email: ${this.email}, Password: ${this.password}, First Name: ${this.firstName}, Last Name: ${this.lastName}, Country: ${this.country}, Zip: ${this.zip}`);
+      if (this.email && this.password && this.firstName && this.lastName && this.country && this.zip) {
+        alert("Registro exitoso. Ahora puedes iniciar sesión.");
+        this.isSignUp = false; // Cambiar al formulario de inicio de sesión
+      } else {
+        alert("Por favor, completa todos los campos.");
+      }
     },
     toggleForm() {
       this.isSignUp = !this.isSignUp;
+    }
+  },
+  mounted() {
+    const query = this.$route.query;
+    if (query.signup === 'true') {
+      this.isSignUp = true; // Activar el formulario de registro
     }
   }
 };
 </script>
 
-
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
+
 .login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   padding: 100px;
+  background: linear-gradient(135deg, #050517, #01569a);
+  font-family: 'Kanit', sans-serif;
 }
 
 .login-container {
@@ -104,7 +122,8 @@ export default {
   width: 1000px;
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .login-left {
@@ -122,14 +141,19 @@ export default {
 .login-right {
   width: 60%;
   padding: 40px;
-  color: #fff;
+  color: white;
 }
 
-
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #ffe900;
+}
 
 .subtitle {
   font-size: 13px;
   color: #b3b3b3;
+  font-family: 'Hiragino Sans', sans-serif;
 }
 
 form {
@@ -141,6 +165,7 @@ form {
 label {
   font-weight: bold;
   font-size: 13px; 
+  color: #ffe900;
 }
 
 input,
@@ -150,8 +175,13 @@ select {
   border: 1px solid #444;
   border-radius: 4px;
   font-size: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
+input::placeholder {
+  color: #ccc;
+}
 
 .name-container {
   display: flex;
@@ -179,7 +209,7 @@ select {
 }
 
 .forgot-password {
-  color: #007bff;
+  color: #fe4a49;
   text-decoration: none;
 }
 
@@ -188,6 +218,20 @@ select {
   color: #ccc;
 }
 
+.btn-signin {
+  background: #ffe900;
+  color: #050517;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-signin:hover {
+  background: #e6d100;
+}
 
 @media (max-width: 900px) {
   .login-container {
