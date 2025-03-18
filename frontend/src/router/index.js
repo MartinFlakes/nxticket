@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '@/views/Login.vue';
+import EventDetail from '@/components/Events/EventDetail.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +22,11 @@ const router = createRouter({
       name: 'login',
       component: LoginView, 
     },
+    {
+      path: '/event-detail',
+      name: 'event-detail',
+      component: EventDetail
+    }
   ],
 });
 
