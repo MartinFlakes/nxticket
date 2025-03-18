@@ -15,7 +15,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="container">
-        <h1>{{ message }}</h1>
-    </div>
+  <div class="container">
+    
+    <router-view />
+  </div>
 </template>

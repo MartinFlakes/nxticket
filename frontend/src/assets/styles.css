@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap');
+
+:root {
+    --color-yellow: #ffe900;
+    --color-blue: #01569a;
+    --color-red: #fe4a49;
+    --color-black: #050517;
+
+    --font-primary: 'Kanit', sans-serif; 
+    --font-secondary: 'Hiragino Sans', sans-serif; 
+}
+
+body {
+    font-family: var(--font-secondary);
+    background-color: var(--color-black);
+    color: white;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-primary);
+    font-weight: 700;
+}
+
+button {
+    font-family: var(--font-primary);
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--color-blue);
+    color:white;
+}
