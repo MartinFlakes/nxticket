@@ -1,22 +1,27 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from './api';
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
+import navbar from './components/navbar.vue';
 
 const message = ref('');
 
 onMounted(async () => {
-    try {
-        const res = await api.get('/test');
-        message.value = res.data.message;
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    const res = await api.get('/test');
+    message.value = res.data.message;
+  } catch (error) {
+    console.error(error);
+  }
 });
 </script>
 
 <template>
-  <div class="container">
-    
+  <Header />
+  <navbar />
+  <main class="container">
     <router-view />
-  </div>
+  </main>
+  <Footer />
 </template>
