@@ -209,12 +209,12 @@ select {
   input,
   select {
     font-size: 14px;
-    padding: 8px; /* Reducido */
+    padding: 8px; 
   }
 
   .btn-signin {
-    padding: 8px; /* Reducido */
-    font-size: 14px; /* Reducido */
+    padding: 8px; 
+    font-size: 14px; 
   }
 }
 </style>
