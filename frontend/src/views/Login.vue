@@ -54,7 +54,9 @@
             By continuing, you agree to the <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.
           </p>
 
-          <button type="submit" class="btn-signin">{{ isSignUp ? 'Next' : 'Sign In' }}</button>
+        <button type="submit" class="btn-signin" @click.prevent="login">
+          {{ isSignUp ? 'Next' : 'Sign In' }}
+        </button>
         </form>
       </div>
     </div>
@@ -78,7 +80,9 @@ export default {
   methods: {
     login() {
       if (this.email && this.password) {
-        this.$router.push({ name: 'UserView' }); // Redirigir a la vista del usuario
+    
+    this.$router.push({ name: 'user' }).catch(err => console.error("Error de navegación:", err));
+
       } else {
         alert("Por favor, ingresa tu correo y contraseña.");
       }
