@@ -24,17 +24,19 @@ h1, h2, h3 {
 }
 
 button {
-    font-family: var(--font-primary);
-    background-color: var(--color-yellow);
-    color: var(--color-black);
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
+  background: #ffe900;
+  color: #050517;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: var(--color-blue);
-    color:white;
+  background: #e6d100;
+
 }
 
 
@@ -145,4 +147,7 @@ button:hover {
     font-weight: 900;
     font-style: italic;
   }
+<<<<<<< HEAD
   
+=======
+>>>>>>> 6f75e95 (vistas nuevas)
