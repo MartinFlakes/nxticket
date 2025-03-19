@@ -1,3 +1,4 @@
+
 <template>
 <div class="conference-view">
 <header class="conference-header">
