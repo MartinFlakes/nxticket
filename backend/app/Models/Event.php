@@ -14,13 +14,21 @@ class Event extends Model
     // columnas que no se registran;
     protected $fillable =[];
 
+    //columnas que no se muestran
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at' ,'category_id', 'venue_id', 'owner_id'];
+
     //Define la relacion con el otro modelo
     public function hosts(){
-        return $this->belongsToMany(Host::class);
+        //se define como host.id para que no haya problema de amniguedad en la consulta
+        return $this->belongsToMany(Host::class)->select(['hosts.id','hosts.name']);
     }
 
     public function categories(){
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->select(['categories.id', 'categories.name']);
+    }
+
+    public function owner(){
+        return $this->belongsTo(Owner::class)->select('owners.id', 'owners.name');
     }
     //
 }

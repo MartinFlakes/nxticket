@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Host extends Model
 {
     //
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at' ,'pivot'];
+
     use HasFactory;
 
     public function events(){
