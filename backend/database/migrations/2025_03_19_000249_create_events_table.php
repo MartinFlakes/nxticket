@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->text('image_url');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->foreignId('category_id')->constrained();
