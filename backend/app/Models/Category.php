@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    // por si fallaba la nomenclatura
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = ['name'];
 }

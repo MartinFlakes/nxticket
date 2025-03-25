@@ -4,31 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-use function PHPUnit\Framework\returnSelf;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    // columnas que no se registran;
-    protected $fillable =[];
+    protected $fillable = [
+        'title',
+        'description',
+        'image_url',
+        'start_date',
+        'end_date',
+        'category_id',
+        'venue_id',
+        'user_id'
+    ];
 
-    //columnas que no se muestran
-    protected $hidden = ['created_at', 'updated_at', 'deleted_at' ,'category_id', 'venue_id', 'owner_id'];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
-    //Define la relacion con el otro modelo
-    public function hosts(){
-        //se define como host.id para que no haya problema de amniguedad en la consulta
-        return $this->belongsToMany(Host::class)->select(['hosts.id','hosts.name']);
+    protected $dates = [
+        'start_date',
+        'end_date'
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
-    public function categories(){
-        return $this->belongsTo(Category::class)->select(['categories.id', 'categories.name']);
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class);
     }
 
-    public function owner(){
-        return $this->belongsTo(Owner::class)->select('owners.id', 'owners.name');
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
-    //
 }
