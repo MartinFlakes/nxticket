@@ -24,11 +24,15 @@ class Event extends Model
     }
 
     public function categories(){
-        return $this->belongsTo(Category::class)->select(['categories.id', 'categories.name']);
+        return $this->belongsTo(Category::class, 'category_id')->select('categories.id', 'categories.name');
     }
 
     public function owner(){
         return $this->belongsTo(Owner::class)->select('owners.id', 'owners.name');
     }
+    public function venue(){
+        return $this->belongsTo(Venue::class, 'venue_id')->select('venues.id', 'venues.name', 'venues.address');
+    }
+
     //
 }

@@ -29,6 +29,10 @@ class EventController extends Controller
         $events = $this->eventService->getEventByHost($hostId);
         return response()->json($events);
     }
+    public function eventsByCategory($idCategory){
+        $events = $this->eventService->getEventByCategory($idCategory);
+        return response()->json($events);
+    }
     public function eventsByTitle($title)
     {
         $events = $this->eventService->getEventByTitle($title);
@@ -36,6 +40,13 @@ class EventController extends Controller
             return response()->json(['message' => 'No events found'], 404);
         }
         return response()->json($events);
+    }
+    public function eventsDetail($idEvent){
+        $event = $this->eventService->getEventsDetail($idEvent);
+        return response()->json($event);
+    }
+    public function createEvent(Request $request){
+        
     }
 
 }
