@@ -20,6 +20,7 @@ return new class extends Migration
             $table->dateTime('end_date');
             $table->foreignId('category_id')->constrained();
             $table->foreignId('venue_id')->nullable()->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
         });
