@@ -10,7 +10,13 @@
         <h2>Tus Inscripciones</h2>
         <ul v-if="subscriptions.length > 0">
           <li v-for="event in subscriptions" :key="event.id">
+<<<<<<< HEAD
             {{ event.nombre }} - {{ event.fecha }}
+=======
+            <router-link :to="{ name: 'event-page', params: { id: event.id } }" class="event-link">
+              {{ event.nombre }} - {{ event.fecha }}
+            </router-link>
+>>>>>>> 6f75e95 (vistas nuevas)
           </li>
         </ul>
         <p v-else>No tienes inscripciones activas.</p>
@@ -20,7 +26,13 @@
         <h2>Conferencias Disponibles</h2>
         <ul>
           <li v-for="event in availableEvents" :key="event.id">
+<<<<<<< HEAD
             {{ event.nombre }} - {{ event.fecha }}
+=======
+            <router-link :to="{ name: 'event-page', params: { id: event.id } }" class="event-link">
+              {{ event.nombre }} - {{ event.fecha }}
+            </router-link>
+>>>>>>> 6f75e95 (vistas nuevas)
             <button @click="subscribe(event)">Inscribirse</button>
           </li>
         </ul>
@@ -38,6 +50,7 @@ export default {
         lastName: "Doe",
         email: "john.doe@example.com",
       },
+<<<<<<< HEAD
       subscriptions: [], // Inscripciones actuales del usuario
       availableEvents: [
         {
@@ -55,12 +68,23 @@ export default {
           nombre: "Foro de Emprendimiento",
           fecha: "2025-07-05",
         },
+=======
+      subscriptions: [],
+      availableEvents: [
+        { id: 1, nombre: "Conferencia de Tecnología", fecha: "2025-06-15" },
+        { id: 2, nombre: "Meetup de Innovación", fecha: "2025-06-20" },
+        { id: 3, nombre: "Foro de Emprendimiento", fecha: "2025-07-05" },
+>>>>>>> 6f75e95 (vistas nuevas)
       ],
     };
   },
   methods: {
     subscribe(event) {
+<<<<<<< HEAD
       this.subscriptions.push(event); // Añadir evento a las inscripciones
+=======
+      this.subscriptions.push(event);
+>>>>>>> 6f75e95 (vistas nuevas)
       alert(`Te has inscrito a: ${event.nombre}`);
     },
   },
@@ -126,6 +150,20 @@ li {
   align-items: center;
 }
 
+<<<<<<< HEAD
+=======
+.event-link {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.event-link:hover {
+  color: #ffe900;
+}
+
+>>>>>>> 6f75e95 (vistas nuevas)
 button {
   background: #ffe900;
   color: #050517;
@@ -145,4 +183,8 @@ button:hover {
     flex-direction: column;
   }
 }
+<<<<<<< HEAD
 </style>
+=======
+</style>
+>>>>>>> 6f75e95 (vistas nuevas)
