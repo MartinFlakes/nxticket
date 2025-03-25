@@ -33,7 +33,7 @@ const eventsData = ref([
     nombre: "Conferencia de Tecnología", 
     fecha: "2025-06-15", 
     descripcion: "Explora las últimas tendencias en tecnología e innovación.",
-    imagen: "https://source.unsplash.com/600x400/?technology,conference",
+    imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "large"
   },
   { 
@@ -41,7 +41,7 @@ const eventsData = ref([
     nombre: "Meetup de Innovación", 
     fecha: "2025-06-20", 
     descripcion: "Únete a la comunidad de innovadores y descubre nuevas ideas.",
-    imagen: "https://source.unsplash.com/600x400/?innovation,meetup",
+    imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "medium"
   },
   { 
@@ -49,7 +49,7 @@ const eventsData = ref([
     nombre: "Foro de Emprendimiento", 
     fecha: "2025-07-05", 
     descripcion: "Consejos y networking para emprendedores.",
-    imagen: "https://source.unsplash.com/600x400/?business,entrepreneurship",
+    imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "small"
   },
   { 
@@ -57,7 +57,7 @@ const eventsData = ref([
     nombre: "Tendencias en IA", 
     fecha: "2025-08-10", 
     descripcion: "Descubre el impacto de la inteligencia artificial en la industria.",
-    imagen: "https://source.unsplash.com/600x400/?ai,artificial-intelligence",
+    imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "large"
   },
   { 
@@ -65,7 +65,7 @@ const eventsData = ref([
     nombre: "Marketing Digital 2025", 
     fecha: "2025-09-01", 
     descripcion: "Estrategias innovadoras para el mundo digital.",
-    imagen: "https://source.unsplash.com/600x400/?marketing,digital",
+    imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "medium"
   }
 ]);

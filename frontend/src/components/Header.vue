@@ -3,11 +3,7 @@
         <nav class="navbar">
             <div class="navbar-brand">
                 <a class="navbar-item" href="/">
-<<<<<<< HEAD
-                    <img src="" alt="Logo">
-=======
                     <img src="@/assets/images/logonxticket.png" alt="Event Image" class="image-logo" />
->>>>>>> 6f75e95 (vistas nuevas)
                 </a>
             </div>
             <div class="navbar-menu">
@@ -28,7 +24,7 @@ export default {
 <style scoped>
 .header {
     color: #fff;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .navbar {
@@ -40,18 +36,14 @@ export default {
 .navbar-item {
     color: #fff;
     text-decoration: none;
-    margin: 0 1rem;
+    margin: 1 1rem;
 }
 
 .navbar-item:hover {
     text-decoration: underline;
 }
-<<<<<<< HEAD
-=======
 
 .image-logo{
     width:100px;
-    height:80px;
 }
->>>>>>> 6f75e95 (vistas nuevas)
 </style>

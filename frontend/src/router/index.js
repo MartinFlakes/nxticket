@@ -1,18 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
-<<<<<<< HEAD
-import LandingView from '@/views/Landing.vue'; // Asegúrate de que el nombre del archivo sea correcto
-import LoginView from '@/views/Login.vue';
-import UserView from '@/views/UserView.vue'; // Importa la nueva vista del usuario
-import EventDetail from '@/components/Events/EventDetail.vue';
-import HomeView from '../views/HomeView.vue';
-=======
 import LandingView from '@/views/Landing.vue';
 import LoginView from '@/views/Login.vue';
 import UserView from '@/views/UserView.vue';
 import EventDetail from '@/components/Events/EventDetail.vue';
 import HomeView from '../views/HomeView.vue';
 import EventPage from'@/views/PageEvent.vue';
->>>>>>> 6f75e95 (vistas nuevas)
+import Registerevent from '@/views/Registerevent.vue';
+import Registerpageevent from '@/views/Registerpage.vue';
+import Myevents from '@/views/Myevents.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,11 +15,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'landing',
-<<<<<<< HEAD
-      component: LandingView, // Landing será la vista por defecto
-=======
       component: LandingView, 
->>>>>>> 6f75e95 (vistas nuevas)
     },
     {
       path: '/home',
@@ -34,25 +25,12 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue'), // Lazy loading para AboutView
+      component: () => import('../views/AboutView.vue'),
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
-<<<<<<< HEAD
-    },
-    {
-      path: '/user',
-      name: 'user',
-      component: UserView, // Nueva ruta para la vista del usuario
-    },
-    {
-      path: '/event-detail',
-      name: 'event-detail',
-      component: EventDetail,
-=======
->>>>>>> 6f75e95 (vistas nuevas)
     },
     {
       path: '/user',
@@ -68,6 +46,24 @@ const router = createRouter({
       path: '/event-page',
       name: 'event-page',
       component: EventPage,
+
+    },
+    {
+      path: '/event-register',
+      name: 'event-register',
+      component: Registerevent,
+
+    },
+    {
+      path: '/event-pageregister',
+      name: 'event-pageregister',
+      component: Registerpageevent,
+
+    },
+    {
+      path: '/myevents',
+      name: 'myevents',
+      component: Myevents,
 
     }
   ],

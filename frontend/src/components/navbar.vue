@@ -29,6 +29,11 @@
           <li class="nav-item">
             <a class="nav-link text-white" href="#">Festivales</a>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link text-white" to="/event-register">Crear Eventos</router-link>
+          </li>
+
+
         </ul>
       </div>
     </nav>
