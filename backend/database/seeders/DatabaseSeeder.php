@@ -26,6 +26,5 @@ class DatabaseSeeder extends Seeder
             EventHostSeeder::class
         ]);
         // User::factory()->count(10)->create();
-        Owner::factory()->count(10)->create();
     }
 }
