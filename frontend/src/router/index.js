@@ -4,6 +4,7 @@ import LoginView from '@/views/Login.vue';
 import UserView from '@/views/UserView.vue'; // Importa la nueva vista del usuario
 import EventDetail from '@/components/Events/EventDetail.vue';
 import HomeView from '../views/HomeView.vue';
+import EventCategory from '@/views/EventCategory.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,12 @@ const router = createRouter({
       name: 'event-detail',
       component: EventDetail,
     },
+    {
+      path: '/category/:category',
+      name: 'EventCategory',
+      component: EventCategory,
+      props: true
+    }
   ],
 });
 
