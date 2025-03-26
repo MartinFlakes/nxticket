@@ -54,46 +54,22 @@
 import { ref } from "vue";
 import axios from "axios";
 
-const eventsData = ref([
-  { 
-    id: 1, 
-    nombre: "Conferencia de Tecnología", 
-    fecha: "2025-06-15", 
-    descripcion: "Explora las últimas tendencias en tecnología e innovación.",
-    imagen: "https://picsum.photos/seed/picsum/200/300",
-    size: "large"
-  },
-  { 
-    id: 2, 
-    nombre: "Meetup de Innovación", 
-    fecha: "2025-06-20", 
-    descripcion: "Únete a la comunidad de innovadores y descubre nuevas ideas.",
-    imagen: "https://picsum.photos/seed/picsum/200/300",
-    size: "medium"
-  },
-  { 
-    id: 3, 
-    nombre: "Foro de Emprendimiento", 
-    fecha: "2025-07-05", 
-    descripcion: "Consejos y networking para emprendedores.",
-    imagen: "https://picsum.photos/seed/picsum/200/300",
-    size: "small"
-  },
-  { 
-    id: 4, 
-    nombre: "Tendencias en IA", 
-    fecha: "2025-08-10", 
-    descripcion: "Descubre el impacto de la inteligencia artificial en la industria.",
-    imagen: "https://picsum.photos/seed/picsum/200/300",
-    size: "large"
-  },
-  { 
-    id: 5, 
-    nombre: "Marketing Digital 2025", 
-    fecha: "2025-09-01", 
-    descripcion: "Estrategias innovadoras para el mundo digital.",
-    imagen: "https://picsum.photos/seed/picsum/200/300",
-    size: "medium"
+// Estado para almacenar los eventos y la paginación
+const eventsData = ref({
+  data: [],
+  next_page_url: null,
+  prev_page_url: null,
+  current_page: 1,
+  last_page: 1
+});
+
+// Función para obtener los eventos de la API
+const fetchEvents = async (url = "http://127.0.0.1:8000/api/events?page=1") => {
+  try {
+    const response = await axios.get(url);
+    eventsData.value = response.data;
+  } catch (error) {
+    console.error("Error fetching events:", error);
   }
 };
 

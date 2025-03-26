@@ -7,6 +7,8 @@ import HomeView from '../views/HomeView.vue';
 import EventPage from'@/views/PageEvent.vue';
 import Registerevent from '@/views/Registerevent.vue';
 import Registerpageevent from '@/views/Registerpage.vue';
+import EventCategory from '@/views/EventCategory.vue';
+
 import Myevents from '@/views/Myevents.vue'
 
 const router = createRouter({
