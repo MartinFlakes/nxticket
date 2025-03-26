@@ -1,0 +1,47 @@
+* [33maedd3c4[m[33m ([m[1;36mHEAD -> [m[1;32msamuel[m[33m)[m cambios
+* [33m05a37b1[m cambios
+* [33mcd771be[m Se arreglan problemas del merge
+*   [33me43b06d[m merge con main
+[32m|[m[33m\[m  
+* [33m|[m [33m6c02666[m administrador
+[33m|[m [33m|[m * [33m2caa413[m[33m ([m[1;31morigin/samuel[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/carlos[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Daniel[m[33m)[m Se soluciona problema con el front
+[33m|[m [33m|[m * [33m5f414c2[m Se soluciona problema con owner
+[33m|[m [33m|[m * [33m06f9639[m Se arregla problema en seeders
+[33m|[m [33m|[m * [33m0e3d967[m Se crean rutas de login, register, user, etc
+[33m|[m [33m|[m[33m/[m  
+[33m|[m *   [33mbccdc89[m meger con main
+[33m|[m [35m|[m[36m\[m  
+[33m|[m [35m|[m * [33m11594ce[m Se modifica el nombre del modelo de Rol a Role Se crean seeders de Roles, Categorias, Roles y Usuarios
+[33m|[m * [36m|[m [33m2039ebe[m Merge con main
+[33m|[m [1;31m|[m[36m\[m[36m|[m 
+[33m|[m [1;31m|[m * [33mcf966da[m Reestructura de modelos y creacion de nuevos
+[33m|[m [1;31m|[m * [33m16937d8[m Se crean nuevas migraciones y se corrigen otras
+[33m|[m [1;31m|[m *   [33m51a5675[m Merge con rama de samuel
+[33m|[m [1;31m|[m [1;33m|[m[33m\[m  
+[33m|[m [1;31m|[m[33m_[m[1;33m|[m[33m/[m  
+[33m|[m[33m/[m[1;31m|[m [1;33m|[m   
+* [1;31m|[m [1;33m|[m [33mc78f9a2[m changes
+* [1;31m|[m [1;33m|[m [33m311bf93[m changes
+[1;34m|[m * [1;33m|[m [33me3a7d0e[m Se modifica modelo venue
+[1;34m|[m * [1;33m|[m [33mdb88808[m Se crea componente eventCategory
+[1;34m|[m * [1;33m|[m [33m7c49ac7[m Se agrega ods nuevos metodos en el controlador
+[1;34m|[m * [1;33m|[m [33m3ec3850[m Se conecta componente a la api
+[1;34m|[m [1;33m|[m[1;33m/[m  
+[1;34m|[m * [33mdfef242[m Se agregan metodos al controlador
+[1;34m|[m * [33m0b06fff[m Se crea modelo y factory de owner
+[1;34m|[m * [33me509671[m Se modifican migraciones
+[1;34m|[m * [33m7623f32[m se crea modelos, factories y seeders
+[1;34m|[m * [33me8e5837[m Se estructura la base de datos y se crean las migraciones
+[1;34m|[m[1;34m/[m  
+* [33m641bcfb[m Redireccion del login
+* [33mb5ccf68[m implementacion de landing page y conectarlo con el login
+* [33m1036c53[m Se crea navbar, header y footer
+* [33m3cb7f66[m Se crea componente detalle evento
+* [33ma669654[m Esto jodia todo
+* [33mbcc7258[m Se agrego fuentes
+* [33ma929fd2[m vista del login
+* [33m0845cba[m vista del login
+* [33m763e49d[m[33m ([m[1;32mmain[m[33m)[m Se reinicializa de forma correcta laravel y vue
+* [33m8851d7a[m Se inicializa vue y bootstrap
+* [33m25d97f8[m Se inicializa laravel
+* [33md585ba3[m Initial commit
