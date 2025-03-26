@@ -18,24 +18,22 @@ class EventService
     public function getEvents()
     {
         // se devuelve con sus relaciones
-        return Event::with(['categories', 'owner', 'hosts'])->paginate(10);
+        return Event::with(['categories', 'hosts'])->paginate(10);
     }
     public function getEventsDetail($idEvent){
-        $event = Event::with(['categories', 'owner', 'hosts', 'venue'])->find($idEvent);
-        if ($event && $event->venue) {
-            $event->max_registrations = $event->venue->getMaxRegistrations($idEvent);
-        }
+        $event = Event::with(['categories', 'hosts', 'venue'])->find($idEvent);
+     
         return $event;
     }
     public function getEventByOwner($ownerId)
     {
-        return Event::with(['categories', 'owner', 'hosts'])
+        return Event::with(['categories', 'hosts'])
                     ->where('owner_id', $ownerId)
                     ->paginate(10);
     }
     public function getEventByHost($hostId)
     {
-        return Event::with(['categories', 'owner', 'hosts'])
+        return Event::with(['categories', 'hosts'])
                     ->whereHas('hosts', function ($query) use ($hostId) {
                         $query->where('hosts.id', $hostId);
                     })
@@ -43,18 +41,18 @@ class EventService
     }
     public function getEventBytitle($title)
     {
-        return Event::with(['categories', 'owner', 'hosts'])
+        return Event::with(['categories', 'hosts'])
                     ->where('title', 'like', '%' . $title . '%')
                     ->paginate();
     }
     public function getEventsByDateRange($startDate, $endDate)
     {
-        return Event::with(['categories', 'owner', 'hosts'])
+        return Event::with(['categories', 'hosts'])
                     ->whereBetween('event_date', [$startDate, $endDate])
                     ->paginate(10);
     }
     public function getEventByCategory($idCategory){
-        return Event::with(['categories', 'owner', 'hosts'])->where('category_id',$idCategory)->paginate(10);
+        return Event::with(['categories', 'hosts'])->where('category_id',$idCategory)->paginate(10);
         
     }
     public function createEvent(Request $request){

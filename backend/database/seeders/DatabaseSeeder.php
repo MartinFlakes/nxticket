@@ -16,15 +16,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // me dio weva hacerlo en una clase
-        User::factory()->count(10)->create();
         Category::factory()->count(10)->create();
-        Owner::factory()->count(10)->create();
         $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
             VenueSeeder::class,
             EventSeeder::class,
             HostSeeder::class,
             EventHostSeeder::class
-
         ]);
+        // User::factory()->count(10)->create();
     }
 }

@@ -32,7 +32,7 @@ class EventFactory extends Factory
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null,
-            'owner_id' => \App\Models\User::all()->random()->id
+            'user_id' => \App\Models\User::all()->random()->id
             
 
         ];

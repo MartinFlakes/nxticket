@@ -8,6 +8,7 @@ import EventPage from'@/views/PageEvent.vue';
 import Registerevent from '@/views/Registerevent.vue';
 import Registerpageevent from '@/views/Registerpage.vue';
 import EventCategory from '@/views/EventCategory.vue';
+import PageEvent from '@/views/PageEvent.vue';
 
 import Myevents from '@/views/Myevents.vue'
 
@@ -53,7 +54,7 @@ const router = createRouter({
     {
       path: '/event-page',
       name: 'event-page',
-      component: EventPage,
+      component: PageEvent,
 
     },
     {
