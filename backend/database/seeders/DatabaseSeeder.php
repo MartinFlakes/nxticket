@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // me dio weva hacerlo en una clase
         Category::factory()->count(10)->create();
         $this->call([
             RoleSeeder::class,
@@ -25,6 +24,5 @@ class DatabaseSeeder extends Seeder
             HostSeeder::class,
             EventHostSeeder::class
         ]);
-        // User::factory()->count(10)->create();
     }
 }
