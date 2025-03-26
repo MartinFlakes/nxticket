@@ -11,7 +11,12 @@
           <a href="#" @click.prevent="toggleForm">{{ isSignUp ? 'Sign In' : 'Sign Up' }}</a>
         </p>
 
-        <form @submit.prevent="isSignUp ? register : login">
+        <form @submit.prevent="handleSubmit">
+          <div v-if="isSignUp">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" v-model="name" placeholder="Enter your full name" required />
+          </div>
+
           <label for="email">Email</label>
           <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
 
@@ -21,29 +26,8 @@
           </div>
 
           <div v-if="isSignUp">
-            <div class="name-container">
-              <div class="name-field">
-                <label for="first-name">First Name</label>
-                <input type="text" id="first-name" v-model="firstName" placeholder="Enter your first name" required />
-              </div>
-              <div class="name-field">
-                <label for="last-name">Last Name</label>
-                <input type="text" id="last-name" v-model="lastName" placeholder="Enter your last name" required />
-              </div>
-            </div>
-
-            <div class="location-container">
-              <div class="location-field">
-                <label for="country">Country of Residence</label>
-                <select id="country" v-model="country" required>
-                  <option value="United States">United States</option>
-                </select>
-              </div>
-              <div class="location-field">
-                <label for="zip">Zip/Postal Code</label>
-                <input type="text" id="zip" v-model="zip" placeholder="Enter your zip code" required />
-              </div>
-            </div>
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" id="password_confirmation" v-model="password_confirmation" placeholder="Confirm your password" required />
           </div>
 
           <div class="options">
@@ -54,9 +38,9 @@
             By continuing, you agree to the <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.
           </p>
 
-        <button type="submit" class="btn-signin" @click.prevent="login">
-          {{ isSignUp ? 'Next' : 'Sign In' }}
-        </button>
+          <button type="submit" class="btn-signin">
+            {{ isSignUp ? 'Register' : 'Sign In' }}
+          </button>
         </form>
       </div>
     </div>
@@ -64,49 +48,73 @@
 </template>
 
 <script>
+import { registerUser, loginUser } from '@/services/authService';
+
 export default {
   data() {
     return {
-      isSignUp: false, 
+      isSignUp: false,
       email: '',
       password: '',
-      firstName: '',
-      lastName: '',
-      country: 'United States',
-      zip: '',
+      password_confirmation: '',
+      name: '',
       showPassword: false,
     };
   },
   methods: {
-    login() {
-      if (this.email && this.password) {
-    
-    this.$router.push({ name: 'user' }).catch(err => console.error("Error de navegación:", err));
+    async handleSubmit() {
+      if (this.isSignUp) {
+        await this.register();
+      } else {
+        await this.login();
+      }
+    },
 
-      } else {
-        alert("Por favor, ingresa tu correo y contraseña.");
+    async register() {
+      if (!this.name || !this.email || !this.password || !this.password_confirmation) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      try {
+        await registerUser({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.password_confirmation,
+        });
+
+        this.$router.push({ name: 'user' });
+      } catch (error) {
+        alert(error);
       }
     },
-    register() {
-      if (this.email && this.password && this.firstName && this.lastName && this.country && this.zip) {
-        alert("Registro exitoso. Ahora puedes iniciar sesión.");
-        this.isSignUp = false; // Cambiar al formulario de inicio de sesión
-      } else {
-        alert("Por favor, completa todos los campos.");
+
+    async login() {
+      if (!this.email || !this.password) {
+        alert("Please enter your email and password.");
+        return;
+      }
+
+      try {
+        await loginUser({
+          email: this.email,
+          password: this.password,
+        });
+
+        this.$router.push({ name: 'user' });
+      } catch (error) {
+        alert(error);
       }
     },
+
     toggleForm() {
       this.isSignUp = !this.isSignUp;
-    }
+    },
   },
-  mounted() {
-    const query = this.$route.query;
-    if (query.signup === 'true') {
-      this.isSignUp = true; // Activar el formulario de registro
-    }
-  }
 };
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
