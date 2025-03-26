@@ -27,6 +27,11 @@
             <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '7' } }">Festivales</router-link>
           
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link text-white" to="/event-register">Crear Eventos</router-link>
+          </li>
+
+
         </ul>
       </div>
     </nav>

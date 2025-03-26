@@ -1,11 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingView from '@/views/Landing.vue'; // Asegúrate de que el nombre del archivo sea correcto
+import LandingView from '@/views/Landing.vue';
 import LoginView from '@/views/Login.vue';
-import UserView from '@/views/UserView.vue'; // Importa la nueva vista del usuario
+import UserView from '@/views/UserView.vue';
 import EventDetail from '@/components/Events/EventDetail.vue';
 import HomeView from '../views/HomeView.vue';
+import EventPage from'@/views/PageEvent.vue';
+import Registerevent from '@/views/Registerevent.vue';
+import Registerpageevent from '@/views/Registerpage.vue';
 import EventCategory from '@/views/EventCategory.vue';
 import PageEvent from '@/views/PageEvent.vue';
+
+import Myevents from '@/views/Myevents.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,7 +18,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'landing',
-      component: LandingView, // Landing será la vista por defecto
+      component: LandingView, 
     },
     {
       path: '/home',
@@ -23,22 +28,12 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue'), // Lazy loading para AboutView
+      component: () => import('../views/AboutView.vue'),
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
-    },
-    {
-      path: '/user',
-      name: 'user',
-      component: UserView, // Nueva ruta para la vista del usuario
-    },
-    {
-      path: '/event-detail',
-      name: 'event-detail',
-      component: EventDetail,
     },
     {
       path: '/user',
@@ -60,6 +55,24 @@ const router = createRouter({
       path: '/event-page',
       name: 'event-page',
       component: PageEvent,
+
+    },
+    {
+      path: '/event-register',
+      name: 'event-register',
+      component: Registerevent,
+
+    },
+    {
+      path: '/event-pageregister',
+      name: 'event-pageregister',
+      component: Registerpageevent,
+
+    },
+    {
+      path: '/myevents',
+      name: 'myevents',
+      component: Myevents,
 
     }
   ],

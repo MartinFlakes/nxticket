@@ -24,7 +24,7 @@ export default {
 <style scoped>
 .header {
     color: #fff;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .navbar {
@@ -36,7 +36,7 @@ export default {
 .navbar-item {
     color: #fff;
     text-decoration: none;
-    margin: 0 1rem;
+    margin: 1 1rem;
 }
 
 .navbar-item:hover {
@@ -45,6 +45,5 @@ export default {
 
 .image-logo{
     width:100px;
-    height:80px;
 }
 </style>
