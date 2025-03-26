@@ -10,22 +10,49 @@
     </header>
 
     <section class="conferences-grid">
-      <div v-for="event in eventsData" :key="event.id" 
+      <div v-for="event in eventsData.data" :key="event.id" 
            :class="['conference-item', event.size]">
-        <img :src="event.imagen" :alt="event.nombre" class="conference-image">
+        <img :src="event.imag" :alt="event.title" class="conference-image">
         <div class="conference-details">
-          <h3>{{ event.nombre }}</h3>
-          <div class="conf-date">{{ formatDate(event.fecha) }}</div>
-          <p>{{ event.descripcion }}</p>
+          <h3>{{ event.title }}</h3>
+          <div class="conf-date">{{ formatDate(event.start_date) }} -  {{formatDate(event.end_date) }}</div>
+          <p>{{ event.description }}</p>
+          <!-- <p><strong>Categoría:</strong> {{ event.categories.name }}</p> -->
+          <p><strong>Organizador:</strong> {{ event.owner.name }}</p>
+          <p>
+            <strong>Anfitriones:</strong>
+            <span v-for="(host, index) in event.hosts" :key="host.id">
+              {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
+            </span>
+          </p>
           <router-link to="/login" class="conf-btn">Inscribirse</router-link>
         </div>
       </div>
     </section>
+
+    <!-- Paginación -->
+    <div class="pagination">
+      <!-- Botón de Anterior -->
+      <button 
+        v-if="eventsData.prev_page_url" 
+        @click="fetchEvents(eventsData.prev_page_url)"
+        class="btn-pagination">Anterior</button>
+      
+      <!-- Mostrar el número de página actual -->
+      <span>{{ eventsData.current_page }} de {{ eventsData.last_page }}</span>
+      
+      <!-- Botón de Siguiente -->
+      <button 
+        v-if="eventsData.next_page_url" 
+        @click="fetchEvents(eventsData.next_page_url)"
+        class="btn-pagination">Siguiente</button>
+    </div>
   </main>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import axios from "axios";
 
 const eventsData = ref([
   { 
@@ -68,12 +95,16 @@ const eventsData = ref([
     imagen: "https://picsum.photos/seed/picsum/200/300",
     size: "medium"
   }
-]);
+};
 
+// Formatear fecha
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-ES", { year: 'numeric', month: 'long', day: 'numeric' });
 };
+
+// Llamada inicial para cargar los eventos
+fetchEvents();
 </script>
 
 <style scoped>
@@ -166,10 +197,6 @@ const formatDate = (dateString) => {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-.conference-item.large { grid-column: span 2; }
-.conference-item.medium { grid-column: span 1; }
-.conference-item.small { grid-column: span 1; }
-
 .conference-image {
   width: 100%;
   height: 200px;
@@ -217,6 +244,29 @@ const formatDate = (dateString) => {
 
 .conf-btn:hover {
   background: #e6d100;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-pagination {
+  background: #ffe900;
+  padding: 0.6rem 1.5rem;
+  border-radius: 5px;
+  color: #050517;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-pagination:hover {
+  background: #e6d100;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {

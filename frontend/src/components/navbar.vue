@@ -15,19 +15,17 @@
       <div class="collapse navbar-collapse " id="navbarNav">
         <ul class="navbar-nav ">
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Conciertos</a>
+            <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '1' } }">Comedia</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Comedia</a>
+            <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '2' } }">Conferencias</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Conferencias</a>
+            <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '4' } }">Meetups</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Meetups</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="#">Festivales</a>
+            <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '7' } }">Festivales</router-link>
+          
           </li>
           <li class="nav-item">
             <router-link class="nav-link text-white" to="/event-register">Crear Eventos</router-link>

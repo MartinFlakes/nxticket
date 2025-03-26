@@ -43,6 +43,12 @@ const router = createRouter({
       component: EventDetail,
     },
     {
+      path: '/category/:category',
+      name: 'EventCategory',
+      component: EventCategory,
+      props: true
+    },
+    {
       path: '/event-page',
       name: 'event-page',
       component: EventPage,
