@@ -17,7 +17,6 @@
               {{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}
             </div>
             <p><strong>Categoría:</strong> {{ event.categories.name }}</p>
-            <p><strong>Organizador:</strong> {{ event.owner.name }}</p>
             <p>
               <strong>Anfitriones:</strong>
               <span v-for="(host, index) in event.hosts" :key="host.id">

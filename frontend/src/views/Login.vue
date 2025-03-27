@@ -90,6 +90,8 @@ export default {
           password_confirmation: this.password_confirmation,
         });
 
+        await this.loginUserAfterRegister();
+
         this.$router.push({ name: 'user' });
       } catch (error) {
         alert(error);
@@ -98,8 +100,10 @@ export default {
 
     async loginUserAfterRegister() {
       try {
-        // Realizar login con las mismas credenciales que se usaron para el registro
-        await this.login();
+        await loginUser({
+          email: this.email,
+          password: this.password,
+        });
       } catch (error) {
         alert("Login after registration failed: " + error);
       }
