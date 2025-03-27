@@ -22,7 +22,9 @@ class Host extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'pivot'
+        'pivot',
+        'email',
+        'bio'
     ];
 
     public function events()

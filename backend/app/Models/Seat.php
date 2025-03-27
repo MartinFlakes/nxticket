@@ -14,7 +14,12 @@ class Seat extends Model
         'number',
         'zone_id'
     ];
-
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+    
     public function zone()
     {
         return $this->belongsTo(Zone::class);

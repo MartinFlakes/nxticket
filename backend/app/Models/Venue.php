@@ -17,4 +17,7 @@ class Venue extends Model
         'state',
         'zip'
     ];
+
+
+    
 }

@@ -1,6 +1,9 @@
 <?php
 namespace App\Services;
 use App\Models\Event;
+use App\Models\Zone;
+use App\Models\Seat;
+
 use Illuminate\Http\Request;
 
 class EventService
@@ -19,9 +22,20 @@ class EventService
         // se devuelve con sus relaciones
         return Event::with(['categories', 'hosts'])->paginate(10);
     }
+    
     public function getEventsDetail($idEvent){
         $event = Event::with(['categories', 'hosts', 'venue'])->find($idEvent);
-     
+        if ($event && $event->venue) {
+            $zones = Zone::where('venue_id', $event->venue->id)->get();
+            // colocar dento del objeto venue
+            // si existe un venue puedes buscar una zona
+            $event->venue->zones = $zones;
+            // recorre cada zona y devuelve la coleccion de asientos
+            foreach ($zones as $zone) {
+                $zone->seats = Seat::where('zone_id', $zone->id)->get();
+            }
+            $event->venue->zones = $zones;
+        }
         return $event;
     }
     public function getEventByuser($userId)

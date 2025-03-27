@@ -48,7 +48,7 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
     public function venue(){
-        return $this->belongsTo(Venue::class, 'venue_id')->select('venues.id', 'venues.name', 'venues.address');
+        return $this->belongsTo(Venue::class, 'venue_id')->select('venues.id', 'venues.name', 'venues.address', 'venues.city', 'venues.state');
     }
     public function hosts(){
         return $this->BelongsToMany(Host::class);

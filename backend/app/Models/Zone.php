@@ -16,6 +16,12 @@ class Zone extends Model
         'venue_id'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+    
     protected $casts = [
         'price' => 'decimal:2'
     ];
