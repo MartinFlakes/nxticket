@@ -15,7 +15,8 @@ export async function registerUser(userData) {
     try {
       const response = await api.post('/login', credentials);
       
-      const { access_token } = response.data; 
+      const { access_token } = response.data;
+       
       localStorage.setItem('access_token', access_token); // Guardar token
   
       return response.data; 

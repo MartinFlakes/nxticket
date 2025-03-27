@@ -1,7 +1,6 @@
 <?php
 namespace App\Services;
 use App\Models\Event;
-use App\Models\Category;
 use Illuminate\Http\Request;
 
 class EventService
@@ -25,10 +24,10 @@ class EventService
      
         return $event;
     }
-    public function getEventByOwner($ownerId)
+    public function getEventByuser($userId)
     {
         return Event::with(['categories', 'hosts'])
-                    ->where('owner_id', $ownerId)
+                    ->where('user_id', $userId)
                     ->paginate(10);
     }
     public function getEventByHost($hostId)

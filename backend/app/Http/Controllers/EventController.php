@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\EventService;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
     //
     protected $eventService;
+    protected $categoryService;
 
-    public function __construct(EventService $eventService){
+    public function __construct(EventService $eventService, CategoryService $categoryService){
         $this->eventService = $eventService;
+        $this->categoryService = $categoryService;
     }
 
     public function events()
@@ -19,9 +22,9 @@ class EventController extends Controller
         $events = $this->eventService->getEvents();
         return response()->json($events);
     }
-    public function eventsByOwner($ownerId)
+    public function eventsByuser($ownerId)
     {
-        $events = $this->eventService->getEventByOwner($ownerId);
+        $events = $this->eventService->getEventByuser($ownerId);
         return response()->json($events);
     }
     public function eventsByHost($hostId)
@@ -45,8 +48,10 @@ class EventController extends Controller
         $event = $this->eventService->getEventsDetail($idEvent);
         return response()->json($event);
     }
-    public function createEvent(Request $request){
-        
+    public function getAllCategories()
+    {
+        $categories = $this->categoryService->getCategories();
+        return response()->json($categories);
     }
 
 }
