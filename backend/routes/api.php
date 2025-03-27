@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VenueController;
 
 // Rutas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
@@ -31,3 +32,4 @@ Route::get('/events/myevents/{useId}',[EventController::class, 'eventsByUser']);
 
 Route::get('/events/categories',[EventController::class, 'getAllCategories']);
 
+Route::post('/events/create', [EventController::class, 'createEvent']);

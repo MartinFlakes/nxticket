@@ -54,4 +54,10 @@ class EventController extends Controller
         return response()->json($categories);
     }
 
+    public function createEvent(Request $request)
+    {
+        $event = $this->eventService->createEvent($request);
+        return response()->json($event, 201);
+    }
+
 }

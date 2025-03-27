@@ -68,23 +68,29 @@ class EventService
         return Event::with(['categories', 'hosts'])->where('category_id',$idCategory)->paginate(10);
         
     }
-    public function createEvent(Request $request){
-        $event = new Event;
-
-        $event->name = $request->name;
-        $event->description = $request->description;
-        $event->event_date = $request->event_date;
-        $event->category_id = $request->category_id;
-        $event->venue_id = $request->venue_id;
-        $event->owner_id = $request->owner_id;
-
-        $event->save();
-
-        if ($request->hosts) {
-            $event->hosts()->attach($request->hosts);
+    public function createEvent(Request $request)
+    {
+        $imageService = new ImageService();
+     
+        try {
+            $event = Event::create([
+                'title' => $request->input('title'),
+                'description' => $request->input('description'),
+                'image_url' => $imageService->uploadImage($request->file('image')) ,
+                'start_date' => $request->input('start_date'), 
+                'end_date' => $request->input('end_date'),
+                'category_id' => $request->input('category_id'),
+                'venue_id' => $request->input('venue_id'),
+                'user_id' => $request->input('user_id'),
+            ]);
+            // asignar al evento los hosts
+            if ($request->has('hosts') || is_array($request->input('hosts'))) {
+                $event->hosts()->attach($request->input('hosts'));
+            }
+            return response()->json(['success' => true, 'event' => $event], 201);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
-
-        return $event;
     }
 
 }
