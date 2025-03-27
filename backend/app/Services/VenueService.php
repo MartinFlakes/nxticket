@@ -28,4 +28,17 @@ class VenueService{
         }
         return $venues;
     }
+    public function createVenue($data)
+    {
+        $venue = Venue::create([
+            'name' => $data['name'],
+            'address' => $data['address'],
+            'city' => $data['city'],
+            'state' => $data['state'],
+            'zip' => $data['zip']
+        ]);
+
+        return $venue;
+    }
+
 }
