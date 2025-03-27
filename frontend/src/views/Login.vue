@@ -42,6 +42,11 @@
             {{ isSignUp ? 'Register' : 'Sign In' }}
           </button>
         </form>
+
+        <!-- Mostrar nombre del usuario si está logueado -->
+        <div v-if="user">
+          <p>Welcome, {{ user.name }}!</p>
+        </div>
       </div>
     </div>
   </div>
@@ -59,6 +64,7 @@ export default {
       password_confirmation: '',
       name: '',
       showPassword: false,
+      user: null, // Guardar los datos del usuario aquí
     };
   },
   methods: {
@@ -97,10 +103,7 @@ export default {
     async loginUserAfterRegister() {
       try {
         // Realizar login con las mismas credenciales que se usaron para el registro
-        await loginUser({
-          email: this.email,
-          password: this.password,
-        });
+        await this.login();
       } catch (error) {
         alert("Login after registration failed: " + error);
       }
@@ -113,10 +116,22 @@ export default {
       }
 
       try {
-        await loginUser({
+        const response = await loginUser({
           email: this.email,
           password: this.password,
         });
+
+        // Almacenar el JWT y el usuario en el localStorage
+        const { access_token, user } = response;
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        // Guardar los datos del usuario en el estado del componente
+        this.user = user;
+
+        // Mostrar el nombre del usuario y JWT en la consola
+        console.log("JWT Token: ", access_token);
+        console.log("Logged in user: ", user.name);
 
         this.$router.push({ name: 'user' });
       } catch (error) {
@@ -128,10 +143,16 @@ export default {
       this.isSignUp = !this.isSignUp;
     },
   },
+
+  mounted() {
+    // Si el usuario está logueado, obtener los datos desde el localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+    }
+  },
 };
 </script>
-
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
 

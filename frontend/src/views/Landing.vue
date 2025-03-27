@@ -4,8 +4,9 @@
       <h1>Bienvenido a NxTicket</h1>
       <p class="subtitle">Descubre conferencias y eventos exclusivos.</p>
       <div class="buttons">
-        <router-link to="/login" class="btn btn-login">Iniciar Sesión</router-link>
-        <router-link to="/login?signup=true" class="btn btn-register">Registrarse</router-link>
+        <!-- Mostrar solo si no hay token en el localStorage -->
+        <router-link v-if="!isLoggedIn" to="/login" class="btn btn-login">Iniciar Sesión</router-link>
+        <router-link v-if="!isLoggedIn" to="/login?signup=true" class="btn btn-register">Registrarse</router-link>
       </div>
     </header>
 
@@ -25,7 +26,8 @@
               {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
             </span>
           </p>
-          <router-link to="/login" class="conf-btn">Inscribirse</router-link>
+          <router-link v-if="isLoggedIn" to="/events/inscribe" class="conf-btn">Inscribirse</router-link>
+          <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
         </div>
       </div>
     </section>
@@ -62,6 +64,9 @@ const eventsData = ref({
   current_page: 1,
   last_page: 1
 });
+
+// Verificar si el usuario está logueado (si existe el token)
+const isLoggedIn = ref(localStorage.getItem("access_token") !== null);
 
 // Función para obtener los eventos de la API
 const fetchEvents = async (url = "http://127.0.0.1:8000/api/events?page=1") => {
