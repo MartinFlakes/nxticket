@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VenueController;
 
@@ -15,10 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     
     Route::post('/venue', [VenueController::class, 'createVenue']);
-});
 
-Route::get('/test', function () {
-    return response()->json(['message' => '¡Hola desde Laravel!']);
+    Route::post('/event_registration/{eventId}', [RegistrationController::class, 'event_registration']);
 });
 
 Route::get('/events', [EventController::class, 'events']);
@@ -35,4 +34,3 @@ Route::get('/categories',[EventController::class, 'getAllCategories']);
 
 Route::post('/events/create', [EventController::class, 'createEvent']);
 Route::get('/venues', [VenueController::class, 'getVenues']);
-
