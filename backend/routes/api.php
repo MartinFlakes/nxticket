@@ -13,6 +13,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     
+    Route::post('/venue', [VenueController::class, 'createVenue']);
 });
 
 Route::get('/test', function () {
