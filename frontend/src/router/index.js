@@ -9,7 +9,7 @@ import Registerpageevent from '@/views/Registerpage.vue';
 import EventCategory from '@/views/EventCategory.vue';
 import PageEvent from '@/views/PageEvent.vue';
 import Myevents from '@/views/Myevents.vue';
-import { isAuthenticated, isAdmin } from '@/services/authService';  // Importa correctamente las funciones
+import { isAuthenticated, isAdmin } from '@/services/authService';  
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -78,30 +78,35 @@ const router = createRouter({
   ],
 });
 
-// ⚠️ Guardia global para verificar autenticación y rol antes de acceder a rutas protegidas
 router.beforeEach((to, from, next) => {
-  console.log(`Intentando acceder a: ${to.name}`);
+  console.log(`Intentando acceder a: ${to.fullPath}`);
 
-  // Verificar si la ruta requiere autenticación
+  // Si ya está autenticado y trata de ir al login, redirigirlo al /user
+  if (to.name === 'login' && isAuthenticated()) {
+    console.log('Ya estás autenticado, redirigiendo a /user');
+    return next({ name: 'user' }); // Evitar que vuelva al login
+  }
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Si no está autenticado, redirigir a login
+    // Si no está autenticado, redirigirlo al login
     if (!isAuthenticated()) {
       console.log('No autenticado, redirigiendo al login...');
-      return next({ name: 'login' });
+      return next({ name: 'login', query: { redirect: to.fullPath } });
     }
 
-    // Si la ruta requiere permisos de administrador, y el usuario no es admin, redirigir
+    // Si es admin y no tiene permisos de admin
     if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin()) {
       console.log('Acceso denegado. Se requiere rol de administrador.');
-      return next({ name: 'landing' }); // Redirigir a landing si no es admin
+      return next({ name: 'landing' });
     }
 
     console.log('Autenticado, permitiendo acceso...');
-    return next();  // Permitir acceso si todo es correcto
+    return next();
   }
 
-  // Si la ruta no requiere autenticación, permitir acceso
   next();
 });
+
+
 
 export default router;

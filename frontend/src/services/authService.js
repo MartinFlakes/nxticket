@@ -2,14 +2,23 @@ import api from '@/api';
 
 // Registrar un usuario
 export async function registerUser(userData) {
-    try {
-        const response = await api.post('/register', userData);
-        console.log("Registration successful:", response);
-        return response.data;
-    } catch (error) {
-        console.error("Registration error:", error);
-        throw error.response?.data?.message || "Registration failed. Please try again.";
-    }
+  try {
+      // 1. Realizar la petición para registrar al usuario
+      const response = await api.post('/register', userData);
+      console.log("Registro exitoso:", response);
+
+      // 2. Luego, hacemos login automáticamente con las mismas credenciales
+      const loginResponse = await loginUser({
+          email: userData.email,
+          password: userData.password,
+      });
+      console.log("Login después del registro exitoso:", loginResponse);
+
+      return loginResponse; // Devuelve los datos de login (puedes usar estos datos en tu UI)
+  } catch (error) {
+      console.error("Error en el registro:", error);
+      throw error.response?.data?.message || "Registro fallido. Intenta nuevamente.";
+  }
 }
 
 export async function loginUser(credentials) {
@@ -20,7 +29,8 @@ export async function loginUser(credentials) {
       localStorage.setItem('access_token', access_token);  // Guardar token
       localStorage.setItem('role_id', user.role_id);  // Guardar el rol del usuario
       localStorage.setItem('admin', user.admin);  // Guardar si es admin o no
-
+      localStorage.setItem('isLoggedIn', true);  // Guarda el estado de login
+      window.dispatchEvent(new Event('auth-changed'));  // Emite el evento
       console.log("Login exitoso:", response.data);  // Depura los datos de usuario
 
       return response.data; // Devuelve los datos de usuario para manejar si es admin o no
@@ -36,6 +46,8 @@ export async function loginUser(credentials) {
 export function logoutUser() {
     localStorage.removeItem('access_token');  // Eliminar token
     localStorage.removeItem('role_id');  // Eliminar rol
+    window.dispatchEvent(new Event('auth-changed'));  // Emite el evento
+
 }
 
 
@@ -60,3 +72,5 @@ export function isUser() {
   const role = localStorage.getItem('role_id');
   return role === '2';  // Verifica si el rol es '2' (usuario normal)
 }
+
+

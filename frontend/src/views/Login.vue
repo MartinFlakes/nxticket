@@ -30,6 +30,8 @@
             <input type="password" id="password_confirmation" v-model="password_confirmation" placeholder="Confirm your password" required />
           </div>
 
+          <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
+
           <div class="options">
             <a href="#" class="forgot-password" v-if="!isSignUp">Forgot Password?</a>
           </div>
@@ -64,7 +66,8 @@ export default {
       password_confirmation: '',
       name: '',
       showPassword: false,
-      user: null, // Guardar los datos del usuario aquí
+      user: null,
+      passwordError: '', // Error para contraseña
     };
   },
   methods: {
@@ -77,41 +80,61 @@ export default {
     },
 
     async register() {
-      if (!this.name || !this.email || !this.password || !this.password_confirmation) {
-        alert("Please fill in all fields.");
-        return;
-      }
+  // Agregar depuración para ver los valores de las contraseñas
+    console.log("Contraseña:", this.password);
+    console.log("Confirmación de contraseña:", this.password_confirmation);
+
+  // Validación de que las contraseñas coincidan
+    if (this.password.trim() !== this.password_confirmation.trim()) {
+    this.passwordError = "Las contraseñas no coinciden.";
+    console.log("Las contraseñas NO coinciden.");
+    return;
+  }
+
+      console.log("Las contraseñas coinciden.");
+
+    this.passwordError = ''; // Limpiar error si las contraseñas coinciden
+
+    const userData = {
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      password_confirmation: this.password_confirmation, // Incluir la confirmación de contraseña
+    };
 
       try {
-        await registerUser({
-          name: this.name,
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-        });
-
-        await this.loginUserAfterRegister();
-
-        this.$router.push({ name: 'user' });
+        // Realizar el registro
+        const response = await registerUser(userData);
+        console.log("Respuesta del registro:", response);
+      
+        // Desestructurar el JWT y el usuario
+        const { access_token, user } = response;
+      
+        // Guardar el token y usuario
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+      
+        // Guardar usuario en el estado del componente
+        this.user = user;
+      
+        console.log("JWT Token: ", access_token);
+        console.log("Usuario registrado: ", user.name);
+      
+        // Llamar al loginUser para obtener el rol y continuar
+        await this.loginUser(user);
+      
+        // Redirigir a la página principal o la ruta solicitada
+        const redirectPath = this.$route.query.redirect || '/';
+        this.$router.replace(redirectPath); // Reemplaza la ruta actual
       } catch (error) {
-        alert(error);
-      }
-    },
-
-    async loginUserAfterRegister() {
-      try {
-        await loginUser({
-          email: this.email,
-          password: this.password,
-        });
-      } catch (error) {
-        alert("Login after registration failed: " + error);
+        console.error("Error en el registro: ", error);
+        alert(error.response?.data?.message || error.message || "Hubo un error al registrar.");
       }
     },
 
     async login() {
       if (!this.email || !this.password) {
-        alert("Please enter your email and password.");
+        alert("Por favor ingresa tu correo y contraseña.");
         return;
       }
 
@@ -121,31 +144,50 @@ export default {
           password: this.password,
         });
 
-        // Almacenar el JWT y el usuario en el localStorage
+        // Guardar el token y usuario
         const { access_token, user } = response;
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Guardar los datos del usuario en el estado del componente
+        // Guardar usuario en el estado del componente
         this.user = user;
 
-        // Mostrar el nombre del usuario y JWT en la consola
         console.log("JWT Token: ", access_token);
-        console.log("Logged in user: ", user.name);
+        console.log("Usuario logueado: ", user.name);
 
-        this.$router.push({ name: 'user' });
+        // Obtener la ruta de redirección desde los parámetros de la URL
+        const redirectPath = this.$route.query.redirect || '/'; // Redirige a / si no se encuentra ninguna ruta
+        this.$router.replace(redirectPath); // Esto reemplaza la ruta sin dejar que el usuario regrese
+
       } catch (error) {
-        alert(error);
+        alert(error.response?.data?.message || error.message || "Hubo un error en el inicio de sesión.");
+      }
+    },
+
+    async loginUser(user) {
+      try {
+        const response = await loginUser({
+          email: this.email,
+          password: this.password,
+        });
+
+        const { access_token, user: loggedInUser } = response;
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('user', JSON.stringify(loggedInUser));
+        this.user = loggedInUser;
+
+        console.log("Login exitoso:", loggedInUser.name);
+      } catch (error) {
+        console.error("Error al hacer login después de registro", error);
       }
     },
 
     toggleForm() {
       this.isSignUp = !this.isSignUp;
+      this.passwordError = ''; // Limpiar error cuando se cambia de formulario
     },
   },
-
   mounted() {
-    // Si el usuario está logueado, obtener los datos desde el localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       this.user = JSON.parse(storedUser);
@@ -153,6 +195,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
 

@@ -26,7 +26,7 @@
             </span>
           </p>
           <router-link v-if="isLoggedIn" to="/events/inscribe" class="conf-btn">Inscribirse</router-link>
-          <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
+          <router-link v-else to="/user" class="conf-btn">Iniciar sesión para inscribirse</router-link>
         </div>
       </div>
     </section>
