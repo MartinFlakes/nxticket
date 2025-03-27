@@ -62,6 +62,8 @@ const router = createRouter({
       path: '/event-register',
       name: 'event-register',
       component: Registerevent,
+      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+
     },
     {
       path: '/event-pageregister',
