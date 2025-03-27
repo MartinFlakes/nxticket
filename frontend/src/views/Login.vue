@@ -77,7 +77,6 @@ export default {
       }
 
       try {
-        // Registrar usuario
         await registerUser({
           name: this.name,
           email: this.email,
@@ -85,7 +84,6 @@ export default {
           password_confirmation: this.password_confirmation,
         });
 
-        // Iniciar sesión inmediatamente después del registro
         await this.loginUserAfterRegister();
 
         this.$router.push({ name: 'user' });
@@ -96,7 +94,6 @@ export default {
 
     async loginUserAfterRegister() {
       try {
-        // Realizar login con las mismas credenciales que se usaron para el registro
         await loginUser({
           email: this.email,
           password: this.password,

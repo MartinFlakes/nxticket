@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid" style="background-color: #050517;">
-    <nav class="container navbar navbar-expand-lg ">
+    <nav class="container navbar navbar-expand-lg">
       <button
         class="navbar-toggler"
         type="button"
@@ -12,8 +12,8 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse " id="navbarNav">
-        <ul class="navbar-nav ">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
           <li class="nav-item">
             <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '1' } }">Comedia</router-link>
           </li>
@@ -25,13 +25,12 @@
           </li>
           <li class="nav-item">
             <router-link class="nav-link text-white" :to="{ name: 'EventCategory', params: { category: '7' } }">Festivales</router-link>
-          
           </li>
-          <li class="nav-item">
+
+          <!-- Mostrar solo si el usuario es admin -->
+          <li class="nav-item" v-if="isAdmin()">
             <router-link class="nav-link text-white" to="/event-register">Crear Eventos</router-link>
           </li>
-
-
         </ul>
       </div>
     </nav>
@@ -39,8 +38,15 @@
 </template>
 
 <script>
+import { isAdmin } from '@/services/authService';  // Asegúrate de importar la función isAdmin
+
 export default {
   name: "Navbar",
+  methods: {
+    isAdmin() {
+      return isAdmin();  // Llamamos a la función que determina si el usuario es admin
+    }
+  }
 };
 </script>
 
