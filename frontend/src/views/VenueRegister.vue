@@ -1,7 +1,7 @@
 <template>
   <div class="venue-register-container">
     <h1>Registrar Nuevo Lugar</h1>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="createVenue">
       <div class="form-group">
         <label for="name">Nombre del Lugar</label>
         <input type="text" id="name" v-model="venue.name" required />
@@ -22,11 +22,7 @@
         <label for="zip">Código Postal</label>
         <input type="text" id="zip" v-model="venue.zip" required />
       </div>
-      <div class="form-group">
-        <label for="capacity">Capacidad</label>
-        <input type="number" id="capacity" v-model="venue.capacity" required />
-      </div>
-      <button type="button" class="submit-button" @click="createVenue">Registrar Lugar</button>
+      <button type="submit" class="submit-button">Registrar Lugar</button>
     </form>
 
     <h2 v-if="venueCreated">Registrar Zona</h2>
@@ -45,61 +41,125 @@
       </div>
       <button type="submit" class="submit-button">Registrar Zona</button>
     </form>
+
+    <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "VenueRegister",
   data() {
     return {
       venue: {
-        name: '',
-        address: '',
-        city: '',
-        state: '',
-        zip: '',
-        capacity: ''
+        name: "",
+        address: "",
+        city: "",
+        state: "",
+        zip: "",
       },
       zone: {
-        name: '',
-        capacity: '',
-        price: ''
+        name: "",
+        capacity: "",
+        price: "",
       },
       venueCreated: false,
-      venueId: null
+      venueId: null,
+      successMessage: null,
+      errorMessage: null,
     };
   },
   methods: {
     async createVenue() {
+      console.log("Intentando registrar el lugar...");
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/venues', this.venue);
-        this.venueId = response.data.id;
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        const token = localStorage.getItem("access_token");
+        console.log("Token obtenido:", token);
+
+        if (!token) {
+          this.errorMessage = "No se encontró el token de autenticación. Por favor, inicia sesión.";
+          console.error(this.errorMessage);
+          return;
+        }
+
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/venue",
+          this.venue,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Respuesta del servidor:", response.data);
+
+        this.venueId = response.data.venue.id;
         this.venueCreated = true;
-        console.log('Lugar registrado:', response.data);
+        this.successMessage = "Lugar registrado exitosamente.";
+        console.log("Lugar registrado exitosamente con ID:", this.venueId);
       } catch (error) {
-        console.error('Error registrando el lugar:', error);
+        console.error("Error registrando el lugar:", error.response?.data || error.message);
+        this.errorMessage =
+          error.response?.data?.message || "Hubo un error al registrar el lugar. Por favor, intenta nuevamente.";
       }
     },
     async submitZone() {
+      console.log("Intentando registrar la zona...");
       try {
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        const token = localStorage.getItem("access_token");
+        console.log("Token obtenido:", token);
+
+        if (!token) {
+          this.errorMessage = "No se encontró el token de autenticación. Por favor, inicia sesión.";
+          console.error(this.errorMessage);
+          return;
+        }
+
         const zoneData = {
           ...this.zone,
-          venue_id: this.venueId
+          venue_id: this.venueId,
         };
-        const response = await axios.post('http://127.0.0.1:8000/api/zones', zoneData);
-        console.log('Zona registrada:', response.data);
-        // Redirigir o mostrar mensaje de éxito
+
+        console.log("Datos de la zona a enviar:", zoneData);
+
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/zone",
+          zoneData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Respuesta del servidor:", response.data);
+
+        this.successMessage = "Zona registrada exitosamente.";
+        console.log("Zona registrada exitosamente.");
+
+        // Limpiar los campos de la zona después de registrar
+        this.zone.name = "";
+        this.zone.capacity = "";
+        this.zone.price = "";
       } catch (error) {
-        console.error('Error registrando la zona:', error);
+        console.error("Error registrando la zona:", error.response?.data || error.message);
+        this.errorMessage =
+          error.response?.data?.message || "Hubo un error al registrar la zona. Por favor, intenta nuevamente.";
       }
-    }
-  }
+    },
+  },
 };
 </script>
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
 
@@ -108,45 +168,23 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
-  background: linear-gradient(135deg, #01569a, #050517); /* #01569a como principal */
+  background: linear-gradient(135deg, #01569a, #050517);
   border-radius: 16px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  position: relative;
-  overflow: hidden;
-  margin-top: 160px; /* Espacio para header y navbar fijos */
-  font-family: 'Kanit', sans-serif;
+  font-family: "Kanit", sans-serif;
   color: #ffffff;
 }
 
-/* Fondo decorativo */
-.venue-register-container::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(1, 86, 154, 0.3), transparent 70%); /* #01569a tenue */
-  animation: pulse 15s infinite ease-in-out;
-  z-index: 0;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-}
-
 /* Títulos */
-h1, h2 {
+h1,
+h2 {
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2.5rem;
-  color: #ffe900; /* Amarillo como acento */
+  color: #ffe900;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 10px rgba(1, 86, 154, 0.7), 0 0 20px rgba(255, 233, 0, 0.5);
-  position: relative;
-  z-index: 1;
 }
 
 h2 {
@@ -157,36 +195,30 @@ h2 {
 /* Grupo de Formulario */
 .form-group {
   margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 1;
 }
 
 label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
-  color: #ffe900; /* Amarillo para etiquetas */
-  font-weight: 500;
-  text-shadow: 0 0 5px rgba(1, 86, 154, 0.5);
+  color: #ffe900;
 }
 
 input {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #ffe900; /* Borde amarillo */
+  border: 2px solid #ffe900;
   border-radius: 8px;
-  background: rgba(5, 5, 23, 0.5); /* #050517 como fondo secundario */
+  background: rgba(5, 5, 23, 0.5);
   color: #ffffff;
-  font-family: 'Hiragino Sans', sans-serif;
   font-size: 1rem;
-  transition: all 0.3s ease;
 }
 
 input:focus {
   outline: none;
   border-color: #ffffff;
   background: rgba(5, 5, 23, 0.7);
-  box-shadow: 0 0 10px rgba(255, 233, 0, 0.5); /* Sombra amarilla al foco */
+  box-shadow: 0 0 10px rgba(255, 233, 0, 0.5);
 }
 
 /* Botón de Envío */
@@ -194,78 +226,34 @@ input:focus {
   display: block;
   width: 100%;
   padding: 1rem;
-  background: #01569a; /* #01569a como principal */
+  background: #01569a;
   color: #ffffff;
-  border: 2px solid #ffe900; /* Borde amarillo */
+  border: 2px solid #ffe900;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Kanit', sans-serif;
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  margin-top: 1rem;
-  z-index: 1;
-}
-
-.submit-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 233, 0, 0.3); /* Ripple con #ffe900 */
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
-}
-
-.submit-button:hover::before {
-  width: 300px;
-  height: 300px;
 }
 
 .submit-button:hover {
-  background: #024077; /* Tono más oscuro de #01569a */
+  background: #024077;
   color: #ffe900;
   transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(255, 233, 0, 0.5); /* Sombra amarilla */
+  box-shadow: 0 0 15px rgba(255, 233, 0, 0.5);
 }
 
-/* Responsividad */
-@media (max-width: 768px) {
-  .venue-register-container {
-    padding: 1.5rem;
-    margin-top: 140px; /* Ajuste para móviles */
-  }
+/* Mensajes */
+.success-message {
+  color: #4caf50;
+  text-align: center;
+  margin-top: 1rem;
+}
 
-  h1 {
-    font-size: 2rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  label {
-    font-size: 1rem;
-  }
-
-  input {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-  }
-
-  .submit-button {
-    padding: 0.8rem;
-    font-size: 1rem;
-  }
+.error-message {
+  color: #f44336;
+  text-align: center;
+  margin-top: 1rem;
 }
 </style>

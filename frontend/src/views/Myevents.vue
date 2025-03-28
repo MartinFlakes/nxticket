@@ -15,33 +15,28 @@
           <p><strong>Fecha:</strong> {{ formatFecha(event.start_date) }} - {{ formatFecha(event.end_date) }}</p>
           <p><strong>Categoría:</strong> {{ event.categories.name }}</p>
         </div>
-        <div class="event-actions">
-          <button class="edit-btn"><i class="fas fa-edit"></i> Editar</button>
-          <button class="delete-btn" @click="deleteEvent(event.id)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-        </div>
       </div>
     </div>
-
   </div>
-<div class="pagination">
-  <button 
-    v-if="prevPageUrl" 
-    @click="changePage(prevPageUrl)" 
-    class="btn-pagination">
-    « Anterior
-  </button>
+  <div class="pagination">
+    <button 
+      v-if="prevPageUrl" 
+      @click="changePage(prevPageUrl)" 
+      class="btn-pagination">
+      « Anterior
+    </button>
 
-  <span class="pagination-info">
-    Página {{ currentPage }} de {{ lastPage }}
-  </span>
+    <span class="pagination-info">
+      Página {{ currentPage }} de {{ lastPage }}
+    </span>
 
-  <button 
-    v-if="nextPageUrl" 
-    @click="changePage(nextPageUrl)" 
-    class="btn-pagination">
-    Siguiente »
-  </button>
-</div>
+    <button 
+      v-if="nextPageUrl" 
+      @click="changePage(nextPageUrl)" 
+      class="btn-pagination">
+      Siguiente »
+    </button>
+  </div>
 </template>
 
 <script>
@@ -79,9 +74,6 @@ export default {
     formatFecha(fecha) {
       const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(fecha).toLocaleDateString('es-ES', opciones);
-    },
-    deleteEvent(eventId) {
-      console.log(`Eliminar evento con ID: ${eventId}`);
     },
     changePage(url) {
       if (url) {
