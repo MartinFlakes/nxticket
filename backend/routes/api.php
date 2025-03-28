@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VenueController;
+use App\Http\Controllers\ZoneController;
 
 // Rutas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
@@ -16,6 +17,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     
     Route::post('/venue', [VenueController::class, 'createVenue']);
+
+    Route::post('/zone', [ZoneController::class, 'createZone']);
 
     Route::post('/event_registration/{eventId}', [RegistrationController::class, 'event_registration']);
 });

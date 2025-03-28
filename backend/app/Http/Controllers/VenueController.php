@@ -7,7 +7,7 @@ use App\Services\VenueService;
 class VenueController extends Controller
 {
     protected $venueService;
-    //
+    
     public function __construct(VenueService $venueService){
         $this->venueService = $venueService;
     }
