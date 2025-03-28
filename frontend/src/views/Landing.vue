@@ -11,47 +11,38 @@
 
     <section class="conferences-grid">
       <div v-for="event in eventsData.data" :key="event.id" :class="['conference-item', event.size]">
-  <img :src="event.image_url || 'default-image.jpg'" :alt="event.title" class="conference-image">
-  <div class="conference-details">
-    <h3>{{ event.title }}</h3>
-    <div class="conf-date">{{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}</div>
-    <p>{{ event.description }}</p>
+        <img :src="event.image_url || 'default-image.jpg'" :alt="event.title" class="conference-image">
+        <div class="conference-details">
+          <h3>{{ event.title }}</h3>
+          <div class="conf-date">{{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}</div>
+          <p>{{ event.description }}</p>
 
-    <p>
-      <strong>Anfitriones:</strong>
-      <span v-for="(host, index) in event.hosts" :key="host.id">
-        {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
-      </span>
-    </p>
-    <router-link v-if="isLoggedIn" to="/events/inscribe" class="conf-btn">Inscribirse</router-link>
-    <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
-  </div>
-</div>
+          <p>
+            <strong>Anfitriones:</strong>
+            <span v-for="(host, index) in event.hosts" :key="host.id">
+              {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
+            </span>
+          </p>
 
-<!-- Depuración -->
-{{ event }} <!-- Agrega esta línea para ver todos los datos del evento -->
-
+          <!-- Agregar el enlace a los detalles del evento pasando el título -->
+          <router-link 
+            v-if="isLoggedIn" 
+            :to="`/events/event-detail/${event.title}`" 
+            class="conf-btn">Ver detalles</router-link>
+          <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
+        </div>
+      </div>
     </section>
 
     <!-- Paginación -->
     <div class="pagination">
-      <!-- Botón de Anterior -->
-      <button 
-        v-if="eventsData.prev_page_url" 
-        @click="fetchEvents(eventsData.prev_page_url)"
-        class="btn-pagination">Anterior</button>
-      
-      <!-- Mostrar el número de página actual -->
+      <button v-if="eventsData.prev_page_url" @click="fetchEvents(eventsData.prev_page_url)" class="btn-pagination">Anterior</button>
       <span>{{ eventsData.current_page }} de {{ eventsData.last_page }}</span>
-      
-      <!-- Botón de Siguiente -->
-      <button 
-        v-if="eventsData.next_page_url" 
-        @click="fetchEvents(eventsData.next_page_url)"
-        class="btn-pagination">Siguiente</button>
+      <button v-if="eventsData.next_page_url" @click="fetchEvents(eventsData.next_page_url)" class="btn-pagination">Siguiente</button>
     </div>
   </main>
 </template>
+
 
 <script setup>
 import { ref } from "vue";

@@ -43,8 +43,8 @@ const router = createRouter({
       meta: { requiresAuth: true },  
     },
     {
-      path: '/event-detail',
-      name: 'event-detail',
+      path: '/events/event-detail/:title',
+      name: 'EventDetail',
       component: EventDetail,
       meta: { requiresAuth: true },  
     },
@@ -97,8 +97,8 @@ router.beforeEach((to, from, next) => {
   console.log(`Intentando acceder a: ${to.fullPath}`);
 
   if (to.name === 'login' && isAuthenticated()) {
-    console.log('Ya estás autenticado, redirigiendo a /');
-    return next({ name: '' });
+    console.log('Ya estás autenticado, redirigiendo a la página principal...');
+    return next({ name: 'landing' }); 
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -107,14 +107,14 @@ router.beforeEach((to, from, next) => {
       return next({ name: 'login', query: { redirect: to.fullPath } });
     }
 
-    if (to.name === 'user' && isAdmin()) {
-      console.log('Los administradores no pueden acceder a esta ruta. Redirigiendo a /ome');
-      return next({ name: '' });
+    if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin()) {
+      console.log('Acceso denegado. Se requiere rol de administrador. Redirigiendo al inicio...');
+      return next({ name: 'landing' }); 
     }
 
-    if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin()) {
-      console.log('Acceso denegado. Se requiere rol de administrador.');
-      return next({ name: '' });
+    if (to.name === 'user' && isAdmin()) {
+      console.log('Los administradores no pueden acceder a esta ruta. Redirigiendo a la página de inicio...');
+      return next({ name: 'landing' }); 
     }
 
     console.log('Autenticado, permitiendo acceso...');

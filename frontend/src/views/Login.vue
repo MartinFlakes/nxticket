@@ -35,21 +35,11 @@
           </div>
 
           <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
-
-          <div class="options">
-            <a href="#" class="forgot-password" v-if="!isSignUp">Forgot Password?</a>
-          </div>
-
-          <p class="terms">
-            By continuing, you agree to the <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.
-          </p>
-
           <button type="submit" class="btn-signin">
             {{ isSignUp ? 'Register' : 'Sign In' }}
           </button>
         </form>
 
-        <!-- Mostrar nombre del usuario si está logueado -->
         <div v-if="user" class="welcome-user">
           <p>Welcome, {{ user.name }}!</p>
         </div>
@@ -114,36 +104,43 @@ export default {
     },
 
     async login() {
-      if (!this.email || !this.password) {
-        alert("Por favor ingresa tu correo y contraseña.");
-        return;
-      }
+  if (!this.email || !this.password) {
+    alert("Por favor ingresa tu correo y contraseña.");
+    return;
+  }
 
-      try {
-        const response = await loginUser({
-          email: this.email,
-          password: this.password,
-        });
+  try {
+    const response = await loginUser({
+      email: this.email,
+      password: this.password,
+    });
 
-        const { access_token, user } = response;
+    const { access_token, user } = response;
 
-        if (!user.role_id) {
-          console.error("El usuario no tiene un role_id definido.");
-          alert("Hubo un problema con los datos del usuario. Contacta al administrador.");
-          return;
-        }
+    if (!user.role_id) {
+      console.error("El usuario no tiene un role_id definido.");
+      alert("Hubo un problema con los datos del usuario. Contacta al administrador.");
+      return;
+    }
 
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('user', JSON.stringify(user));
 
-        this.user = user;
+    this.user = user;
 
-        const redirectPath = this.$route.query.redirect || '/';
-        this.$router.replace(redirectPath);
-      } catch (error) {
-        alert(error || "Hubo un error en el inicio de sesión.");
-      }
-    },
+    console.log("user.role_id:", user.role_id);
+
+    const redirectPath = this.$route.query.redirect || (user.role_id !== 'admin' ? '/' : '/admin/dashboard');
+    
+    console.log("Redirect path:", redirectPath);
+    
+    this.$router.replace(redirectPath);
+
+  } catch (error) {
+    alert(error || "Hubo un error en el inicio de sesión.");
+  }
+},
+
 
     toggleForm() {
       this.isSignUp = !this.isSignUp;
@@ -162,7 +159,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
 
-/* Contenedor Principal */
 .login-wrapper {
   display: flex;
   justify-content: center;
@@ -175,7 +171,6 @@ export default {
   overflow: hidden;
 }
 
-/* Fondo decorativo */
 .login-wrapper::before {
   content: '';
   position: absolute;
@@ -193,7 +188,6 @@ export default {
   50% { transform: scale(1.1); opacity: 0.8; }
 }
 
-/* Contenedor del Login */
 .login-container {
   display: flex;
   width: 100%;
@@ -204,16 +198,15 @@ export default {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 233, 0, 0.2); /* Toque de #ffe900 */
   position: relative;
   z-index: 1;
-  border: 2px solid #ffe900; /* Borde amarillo como acento */
+  border: 2px solid #ffe900;
 }
 
-/* Lado Izquierdo (Imagen) */
 .login-left {
   width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(5, 5, 23, 0.8); /* #050517 como fondo */
+  background: rgba(5, 5, 23, 0.8); 
   position: relative;
 }
 
@@ -243,7 +236,7 @@ h2 {
   color: #ffe900; /* Amarillo como acento */
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(1, 86, 154, 0.7); /* Sombra con #01569a */
+  text-shadow: 0 0 10px rgba(1, 86, 154, 0.7); 
   animation: glow 2s infinite alternate;
 }
 
@@ -284,7 +277,7 @@ form {
 label {
   font-weight: 500;
   font-size: 1.1rem;
-  color: #ddd; /* Gris claro */
+  color: #ddd; 
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 0.5rem;
@@ -294,10 +287,10 @@ label {
 input {
   width: 100%;
   padding: 1rem;
-  border: 2px solid rgba(1, 86, 154, 0.5); /* Borde con #01569a */
+  border: 2px solid rgba(1, 86, 154, 0.5); 
   border-radius: 10px;
   font-size: 1rem;
-  background: rgba(5, 5, 23, 0.3); /* #050517 como fondo */
+  background: rgba(5, 5, 23, 0.3);
   color: #ffffff;
   transition: all 0.3s ease;
   box-shadow: inset 0 0 5px rgba(1, 86, 154, 0.3);
@@ -310,9 +303,9 @@ input::placeholder {
 }
 
 input:focus {
-  border-color: #ffe900; /* Amarillo al enfocar */
+  border-color: #ffe900; 
   background: rgba(5, 5, 23, 0.5);
-  box-shadow: 0 0 12px rgba(1, 86, 154, 0.7); /* Sombra con #01569a */
+  box-shadow: 0 0 12px rgba(1, 86, 154, 0.7); 
   transform: scale(1.02);
   outline: none;
 }
@@ -334,7 +327,7 @@ input:focus {
 }
 
 .forgot-password {
-  color: #ffe900; /* Amarillo como acento */
+  color: #ffe900; 
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.3s ease;
@@ -362,12 +355,11 @@ input:focus {
   color: #e6d100;
 }
 
-/* Botón */
 .btn-signin {
-  background: #01569a; /* #01569a como principal */
+  background: #01569a;
   color: #ffffff;
   padding: 1.2rem;
-  border: 2px solid #ffe900; /* Borde amarillo */
+  border: 2px solid #ffe900;
   border-radius: 12px;
   font-size: 1.2rem;
   font-weight: 600;
@@ -387,7 +379,7 @@ input:focus {
   left: 50%;
   width: 0;
   height: 0;
-  background: rgba(255, 233, 0, 0.3); /* Efecto ripple con #ffe900 */
+  background: rgba(255, 233, 0, 0.3);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: width 0.6s ease, height 0.6s ease;
@@ -399,13 +391,12 @@ input:focus {
 }
 
 .btn-signin:hover {
-  background: #024077; /* Tono más oscuro de #01569a */
+  background: #024077;
   box-shadow: 0 0 20px rgba(1, 86, 154, 0.8);
   transform: translateY(-3px);
-  color: #ffe900; /* Texto amarillo al hover */
+  color: #ffe900; 
 }
 
-/* Mensaje de Bienvenida */
 .welcome-user p {
   font-size: 1.2rem;
   color: #ffe900;
@@ -414,7 +405,6 @@ input:focus {
   text-shadow: 0 0 5px rgba(1, 86, 154, 0.5);
 }
 
-/* Responsividad */
 @media (max-width: 900px) {
   .login-wrapper {
     padding: 1rem;
