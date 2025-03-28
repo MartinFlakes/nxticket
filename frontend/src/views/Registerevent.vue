@@ -7,6 +7,7 @@
         promociona y haz crecer tu audiencia con facilidad.
       </p>
       <button class="start-button" @click="goToEventRegister">Comenzar</button>
+      <button class="start-button" @click="goToVenueRegister">Crear Lugar</button>
     </div>
   </div>
 </template>
@@ -17,6 +18,9 @@ export default {
   methods: {
     goToEventRegister() {
       this.$router.push("/event-pageregister");
+    },
+    goToVenueRegister() {
+      this.$router.push("/venue-register");
     },
   },
 };
@@ -55,7 +59,6 @@ p {
   padding: 0.75rem 1.5rem;
   font-size: 1.2rem;
   border-radius: 8px;
+  margin: 0.5rem;
 }
-
-
 </style>

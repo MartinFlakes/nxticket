@@ -2,7 +2,7 @@
   <div class="user-view">
     <header class="user-header">
       <h1>Bienvenido, {{ user.firstName }} {{ user.lastName }}</h1>
-      <p>Aquí puedes ver tus inscripciones y explorar nuevas conferencias.</p>
+      <p>Aquí puedes ver tus inscripciones.</p>
     </header>
 
     <section class="user-content">
@@ -10,26 +10,27 @@
         <h2>Tus Inscripciones</h2>
         <ul v-if="subscriptions.length > 0">
           <li v-for="event in subscriptions" :key="event.id">
-            <router-link :to="{ name: 'event-page', params: { id: event.id } }" class="event-link">
-              {{ event.nombre }} - {{ event.fecha }}
-            </router-link>
+            <div class="event-info">
+              <span class="event-title">{{ event.nombre }} - {{ event.fecha }}</span>
+              <p class="event-details">Ubicación: {{ event.ubicacion }} | Hora: {{ event.hora }}</p>
+            </div>
+            <button @click="viewDetails(event)">Ver Detalles</button>
           </li>
         </ul>
         <p v-else>No tienes inscripciones activas.</p>
       </div>
-
-      <div class="available-conferences">
-        <h2>Conferencias Disponibles</h2>
-        <ul>
-          <li v-for="event in availableEvents" :key="event.id">
-            <router-link :to="{ name: 'event-page', params: { id: event.id } }" class="event-link">
-              {{ event.nombre }} - {{ event.fecha }}
-            </router-link>
-            <button @click="subscribe(event)">Inscribirse</button>
-          </li>
-        </ul>
-      </div>
     </section>
+
+    <div v-if="selectedEvent" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ selectedEvent.nombre }}</h2>
+        <p>Fecha: {{ selectedEvent.fecha }}</p>
+        <p>Ubicación: {{ selectedEvent.ubicacion }}</p>
+        <p>Hora: {{ selectedEvent.hora }}</p>
+        <p>Descripción: {{ selectedEvent.descripcion }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -42,18 +43,19 @@ export default {
         lastName: "Doe",
         email: "john.doe@example.com",
       },
-      subscriptions: [],
-      availableEvents: [
-        { id: 1, nombre: "Conferencia de Tecnología", fecha: "2025-06-15" },
-        { id: 2, nombre: "Meetup de Innovación", fecha: "2025-06-20" },
-        { id: 3, nombre: "Foro de Emprendimiento", fecha: "2025-07-05" },
+      subscriptions: [
+        { id: 1, nombre: "Conferencia de Tecnología", fecha: "2025-06-15", ubicacion: "Centro de Convenciones", hora: "10:00 AM", descripcion: "Una conferencia sobre las últimas tendencias en tecnología." },
+        { id: 2, nombre: "Meetup de Innovación", fecha: "2025-06-20", ubicacion: "Auditorio Principal", hora: "2:00 PM", descripcion: "Un meetup para discutir ideas innovadoras y proyectos." },
       ],
+      selectedEvent: null,
     };
   },
   methods: {
-    subscribe(event) {
-      this.subscriptions.push(event);
-      alert(`Te has inscrito a: ${event.nombre}`);
+    viewDetails(event) {
+      this.selectedEvent = event;
+    },
+    closeModal() {
+      this.selectedEvent = null;
     },
   },
 };
@@ -85,12 +87,11 @@ export default {
 
 .user-content {
   display: flex;
-  gap: 2rem;
+  justify-content: center;
   padding: 1rem;
 }
 
-.user-subscriptions,
-.available-conferences {
+.user-subscriptions {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
   padding: 1.5rem;
@@ -118,15 +119,17 @@ li {
   align-items: center;
 }
 
-.event-link {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
+.event-info {
+  flex: 1;
 }
 
-.event-link:hover {
-  color: #ffe900;
+.event-title {
+  font-weight: bold;
+}
+
+.event-details {
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 button {
@@ -141,6 +144,35 @@ button {
 
 button:hover {
   background: #e6d100;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

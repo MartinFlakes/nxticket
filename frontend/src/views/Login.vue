@@ -12,20 +12,24 @@
         </p>
 
         <form @submit.prevent="handleSubmit">
-          <div v-if="isSignUp">
+          <div v-if="isSignUp" class="form-group">
             <label for="name">Full Name</label>
             <input type="text" id="name" v-model="name" placeholder="Enter your full name" required />
           </div>
 
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
-
-          <label for="password">Password</label>
-          <div class="password-container">
-            <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" placeholder="Enter your password" required />
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
           </div>
 
-          <div v-if="isSignUp">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-container">
+              <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" placeholder="Enter your password" required />
+            </div>
+          </div>
+
+          <div v-if="isSignUp" class="form-group">
             <label for="password_confirmation">Confirm Password</label>
             <input type="password" id="password_confirmation" v-model="password_confirmation" placeholder="Confirm your password" required />
           </div>
@@ -46,7 +50,7 @@
         </form>
 
         <!-- Mostrar nombre del usuario si está logueado -->
-        <div v-if="user">
+        <div v-if="user" class="welcome-user">
           <p>Welcome, {{ user.name }}!</p>
         </div>
       </div>
@@ -67,7 +71,7 @@ export default {
       name: '',
       showPassword: false,
       user: null,
-      passwordError: '', // Error para contraseña
+      passwordError: '',
     };
   },
   methods: {
@@ -80,55 +84,32 @@ export default {
     },
 
     async register() {
-  // Agregar depuración para ver los valores de las contraseñas
-    console.log("Contraseña:", this.password);
-    console.log("Confirmación de contraseña:", this.password_confirmation);
+      if (this.password.trim() !== this.password_confirmation.trim()) {
+        this.passwordError = "Las contraseñas no coinciden.";
+        return;
+      }
 
-  // Validación de que las contraseñas coincidan
-    if (this.password.trim() !== this.password_confirmation.trim()) {
-    this.passwordError = "Las contraseñas no coinciden.";
-    console.log("Las contraseñas NO coinciden.");
-    return;
-  }
-
-      console.log("Las contraseñas coinciden.");
-
-    this.passwordError = ''; // Limpiar error si las contraseñas coinciden
-
-    const userData = {
-      name: this.name,
-      email: this.email,
-      password: this.password,
-      password_confirmation: this.password_confirmation, // Incluir la confirmación de contraseña
-    };
+      this.passwordError = '';
+      const userData = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        password_confirmation: this.password_confirmation,
+      };
 
       try {
-        // Realizar el registro
         const response = await registerUser(userData);
-        console.log("Respuesta del registro:", response);
-      
-        // Desestructurar el JWT y el usuario
         const { access_token, user } = response;
-      
-        // Guardar el token y usuario
+
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
-      
-        // Guardar usuario en el estado del componente
+
         this.user = user;
-      
-        console.log("JWT Token: ", access_token);
-        console.log("Usuario registrado: ", user.name);
-      
-        // Llamar al loginUser para obtener el rol y continuar
-        await this.loginUser(user);
-      
-        // Redirigir a la página principal o la ruta solicitada
+
         const redirectPath = this.$route.query.redirect || '/';
-        this.$router.replace(redirectPath); // Reemplaza la ruta actual
+        this.$router.replace(redirectPath);
       } catch (error) {
-        console.error("Error en el registro: ", error);
-        alert(error.response?.data?.message || error.message || "Hubo un error al registrar.");
+        alert(error || "Hubo un error al registrar.");
       }
     },
 
@@ -144,47 +125,29 @@ export default {
           password: this.password,
         });
 
-        // Guardar el token y usuario
         const { access_token, user } = response;
+
+        if (!user.role_id) {
+          console.error("El usuario no tiene un role_id definido.");
+          alert("Hubo un problema con los datos del usuario. Contacta al administrador.");
+          return;
+        }
+
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Guardar usuario en el estado del componente
         this.user = user;
 
-        console.log("JWT Token: ", access_token);
-        console.log("Usuario logueado: ", user.name);
-
-        // Obtener la ruta de redirección desde los parámetros de la URL
-        const redirectPath = this.$route.query.redirect || '/'; // Redirige a / si no se encuentra ninguna ruta
-        this.$router.replace(redirectPath); // Esto reemplaza la ruta sin dejar que el usuario regrese
-
+        const redirectPath = this.$route.query.redirect || '/';
+        this.$router.replace(redirectPath);
       } catch (error) {
-        alert(error.response?.data?.message || error.message || "Hubo un error en el inicio de sesión.");
-      }
-    },
-
-    async loginUser(user) {
-      try {
-        const response = await loginUser({
-          email: this.email,
-          password: this.password,
-        });
-
-        const { access_token, user: loggedInUser } = response;
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('user', JSON.stringify(loggedInUser));
-        this.user = loggedInUser;
-
-        console.log("Login exitoso:", loggedInUser.name);
-      } catch (error) {
-        console.error("Error al hacer login después de registro", error);
+        alert(error || "Hubo un error en el inicio de sesión.");
       }
     },
 
     toggleForm() {
       this.isSignUp = !this.isSignUp;
-      this.passwordError = ''; // Limpiar error cuando se cambia de formulario
+      this.passwordError = '';
     },
   },
   mounted() {
@@ -199,138 +162,268 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
 
+/* Contenedor Principal */
 .login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  padding: 100px;
-  background: linear-gradient(135deg, #050517, #01569a);
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #01569a, #050517); /* #01569a como principal */
   font-family: 'Kanit', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Fondo decorativo */
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(1, 86, 154, 0.3), transparent 70%); /* #01569a tenue */
+  animation: pulse 15s infinite ease-in-out;
+  z-index: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Contenedor del Login */
 .login-container {
   display: flex;
-  width: 1000px;
-  border-radius: 8px;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 16px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: rgba(1, 86, 154, 0.9); /* #01569a como base */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 233, 0, 0.2); /* Toque de #ffe900 */
+  position: relative;
+  z-index: 1;
+  border: 2px solid #ffe900; /* Borde amarillo como acento */
 }
 
+/* Lado Izquierdo (Imagen) */
 .login-left {
   width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(5, 5, 23, 0.8); /* #050517 como fondo */
+  position: relative;
 }
 
 .welcome-image {
   width: 100%;
-  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px 0 0 16px;
+  transition: transform 0.3s ease;
 }
 
+.welcome-image:hover {
+  transform: scale(1.05);
+}
+
+/* Lado Derecho (Formulario) */
 .login-right {
   width: 60%;
-  padding: 40px;
-  color: white;
+  padding: 3rem;
+  color: #ffffff;
+  position: relative;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
-  color: #ffe900;
+  color: #ffe900; /* Amarillo como acento */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(1, 86, 154, 0.7); /* Sombra con #01569a */
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 10px rgba(1, 86, 154, 0.7), 0 0 20px rgba(255, 233, 0, 0.5); }
+  100% { text-shadow: 0 0 15px rgba(1, 86, 154, 0.9), 0 0 30px rgba(255, 233, 0, 0.7); }
 }
 
 .subtitle {
-  font-size: 13px;
-  color: #b3b3b3;
+  font-size: 1rem;
+  color: #ccc;
   font-family: 'Hiragino Sans', sans-serif;
+  margin-bottom: 2rem;
 }
 
+.subtitle a {
+  color: #ffe900;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.subtitle a:hover {
+  color: #e6d100;
+}
+
+/* Formulario */
 form {
   display: flex;
   flex-direction: column;
-  gap: 12px; 
+  gap: 1.5rem;
+}
+
+.form-group {
+  position: relative;
 }
 
 label {
-  font-weight: bold;
-  font-size: 13px; 
-  color: #ffe900;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #ddd; /* Gris claro */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  font-family: 'Kanit', sans-serif;
 }
 
-input,
-select {
+input {
   width: 100%;
-  padding: 10px; 
-  border: 1px solid #444;
-  border-radius: 4px;
-  font-size: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  padding: 1rem;
+  border: 2px solid rgba(1, 86, 154, 0.5); /* Borde con #01569a */
+  border-radius: 10px;
+  font-size: 1rem;
+  background: rgba(5, 5, 23, 0.3); /* #050517 como fondo */
+  color: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 5px rgba(1, 86, 154, 0.3);
+  font-family: 'Hiragino Sans', sans-serif;
 }
 
 input::placeholder {
   color: #ccc;
+  opacity: 0.8;
 }
 
-.name-container {
-  display: flex;
-  gap: 12px; 
+input:focus {
+  border-color: #ffe900; /* Amarillo al enfocar */
+  background: rgba(5, 5, 23, 0.5);
+  box-shadow: 0 0 12px rgba(1, 86, 154, 0.7); /* Sombra con #01569a */
+  transform: scale(1.02);
+  outline: none;
 }
 
-.name-field {
-  flex: 1;
+/* Mensaje de Error */
+.error-message {
+  color: #fe4a49;
+  font-size: 0.9rem;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-family: 'Hir-Font agino Sans', sans-serif;
 }
 
-.location-container {
-  display: flex;
-  gap: 12px; 
-}
-
-.location-field {
-  flex: 1;
-}
-
+/* Opciones */
 .options {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 
 .forgot-password {
-  color: #fe4a49;
+  color: #ffe900; /* Amarillo como acento */
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
+.forgot-password:hover {
+  color: #e6d100;
+}
+
+/* Términos */
 .terms {
-  font-size: 11px;
+  font-size: 0.85rem;
   color: #ccc;
+  font-family: 'Hiragino Sans', sans-serif;
+  margin-bottom: 1.5rem;
 }
 
+.terms a {
+  color: #ffe900;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.terms a:hover {
+  color: #e6d100;
+}
+
+/* Botón */
 .btn-signin {
-  background: #ffe900;
-  color: #050517;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
+  background: #01569a; /* #01569a como principal */
+  color: #ffffff;
+  padding: 1.2rem;
+  border: 2px solid #ffe900; /* Borde amarillo */
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Kanit', sans-serif;
+}
+
+.btn-signin::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 233, 0, 0.3); /* Efecto ripple con #ffe900 */
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-signin:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-signin:hover {
-  background: #e6d100;
+  background: #024077; /* Tono más oscuro de #01569a */
+  box-shadow: 0 0 20px rgba(1, 86, 154, 0.8);
+  transform: translateY(-3px);
+  color: #ffe900; /* Texto amarillo al hover */
 }
 
+/* Mensaje de Bienvenida */
+.welcome-user p {
+  font-size: 1.2rem;
+  color: #ffe900;
+  margin-top: 2rem;
+  font-family: 'Kanit', sans-serif;
+  text-shadow: 0 0 5px rgba(1, 86, 154, 0.5);
+}
+
+/* Responsividad */
 @media (max-width: 900px) {
+  .login-wrapper {
+    padding: 1rem;
+  }
+
   .login-container {
     flex-direction: column;
-    width: 100%;
     max-width: 400px;
-    padding: 20px;
+    padding: 0;
   }
 
   .login-left {
@@ -339,18 +432,16 @@ input::placeholder {
 
   .login-right {
     width: 100%;
-    padding: 20px;
+    padding: 2rem;
   }
 
-  input,
-  select {
-    font-size: 14px;
-    padding: 8px; 
+  h2 {
+    font-size: 2rem;
   }
 
   .btn-signin {
-    padding: 8px; 
-    font-size: 14px; 
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
 </style>

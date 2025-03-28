@@ -9,6 +9,8 @@ import Registerpageevent from '@/views/Registerpage.vue';
 import EventCategory from '@/views/EventCategory.vue';
 import PageEvent from '@/views/PageEvent.vue';
 import Myevents from '@/views/Myevents.vue';
+import AccountView from '@/views/Account.vue';  // Ruta para la vista de cuenta
+import VenueRegister from '@/views/VenueRegister.vue'; // Importar la vista de crear lugar
 import { isAuthenticated, isAdmin } from '@/services/authService';  
 
 const router = createRouter({
@@ -63,7 +65,6 @@ const router = createRouter({
       name: 'event-register',
       component: Registerevent,
       meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
-
     },
     {
       path: '/event-pageregister',
@@ -75,6 +76,18 @@ const router = createRouter({
       path: '/myevents',
       name: 'myevents',
       component: Myevents,
+      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+    },
+    {
+      path: '/account',  // Ruta para la página de cuenta
+      name: 'account',
+      component: AccountView,
+      meta: { requiresAuth: true },  // Requiere autenticación
+    },
+    {
+      path: '/venue-register',  // Ruta para la página de crear lugar
+      name: 'venue-register',
+      component: VenueRegister,
       meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
     }
   ],
@@ -108,7 +121,5 @@ router.beforeEach((to, from, next) => {
 
   next();
 });
-
-
 
 export default router;
