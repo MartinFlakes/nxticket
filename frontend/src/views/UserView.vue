@@ -11,52 +11,129 @@
         <ul v-if="subscriptions.length > 0">
           <li v-for="event in subscriptions" :key="event.id">
             <div class="event-info">
-              <span class="event-title">{{ event.nombre }} - {{ event.fecha }}</span>
-              <p class="event-details">Ubicación: {{ event.ubicacion }} | Hora: {{ event.hora }}</p>
+              <span class="event-title">{{ event.title }} - {{ formatDate(event.start_date) }}</span>
+              <p class="event-details">Ubicación: {{ event.venue?.name || 'No especificada' }} | Hora: {{ formatTime(event.start_date) }}</p>
             </div>
-            <button @click="viewDetails(event)">Ver Detalles</button>
+            <button @click="fetchEventDetails(event.id)">Ver Detalles</button>
           </li>
         </ul>
         <p v-else>No tienes inscripciones activas.</p>
       </div>
     </section>
 
+    <!-- Modal para mostrar detalles del evento -->
     <div v-if="selectedEvent" class="modal" @click.self="closeModal">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ selectedEvent.nombre }}</h2>
-        <p>Fecha: {{ selectedEvent.fecha }}</p>
-        <p>Ubicación: {{ selectedEvent.ubicacion }}</p>
-        <p>Hora: {{ selectedEvent.hora }}</p>
-        <p>Descripción: {{ selectedEvent.descripcion }}</p>
+        <h2>{{ selectedEvent.title }}</h2>
+        <p>Fecha: {{ formatDate(selectedEvent.start_date) }}</p>
+        <p>Ubicación: {{ selectedEvent.venue?.name || 'No especificada' }}</p>
+        <p>Hora: {{ formatTime(selectedEvent.start_date) }}</p>
+        <p>Descripción: {{ selectedEvent.description }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
+  name: "UserView",
   data() {
     return {
       user: {
+        id: null, // ID del usuario obtenido del token
         firstName: "John",
         lastName: "Doe",
         email: "john.doe@example.com",
       },
-      subscriptions: [
-        { id: 1, nombre: "Conferencia de Tecnología", fecha: "2025-06-15", ubicacion: "Centro de Convenciones", hora: "10:00 AM", descripcion: "Una conferencia sobre las últimas tendencias en tecnología." },
-        { id: 2, nombre: "Meetup de Innovación", fecha: "2025-06-20", ubicacion: "Auditorio Principal", hora: "2:00 PM", descripcion: "Un meetup para discutir ideas innovadoras y proyectos." },
-      ],
-      selectedEvent: null,
+      subscriptions: [], // Lista de eventos a los que el usuario está inscrito
+      selectedEvent: null, // Detalles del evento seleccionado
     };
   },
   methods: {
-    viewDetails(event) {
-      this.selectedEvent = event;
+    // Obtener el ID del usuario desde el token almacenado en localStorage
+    getUserIdFromToken() {
+      console.log("Intentando obtener el ID del usuario desde localStorage...");
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        console.error("No se encontró el token en localStorage.");
+        return null;
+      }
+
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("Usuario obtenido desde localStorage:", user);
+        return user?.id || null;
+      } catch (error) {
+        console.error("Error al parsear el usuario desde localStorage:", error);
+        return null;
+      }
     },
+
+    // Obtener las inscripciones del usuario desde la API
+    async fetchSubscriptions() {
+      console.log("Intentando obtener las inscripciones del usuario...");
+      console.log("ID del usuario:", this.user.id);
+
+      if (!this.user.id) {
+        console.error("El ID del usuario es nulo. No se puede continuar.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/events/myevents/${this.user.id}`);
+        console.log("Respuesta de la API para las inscripciones:", response.data);
+        this.subscriptions = response.data.data || response.data; // Adaptado al formato esperado
+      } catch (error) {
+        console.error("Error al obtener las inscripciones:", error.response?.data || error.message);
+        this.subscriptions = []; // Limpia las inscripciones si hay un error
+      }
+    },
+
+    // Obtener los detalles de un evento específico
+    async fetchEventDetails(eventId) {
+      console.log("Intentando obtener los detalles del evento con ID:", eventId);
+
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/events/${eventId}`);
+        console.log("Detalles del evento obtenidos:", response.data);
+        this.selectedEvent = response.data;
+      } catch (error) {
+        console.error("Error al obtener los detalles del evento:", error.response?.data || error.message);
+      }
+    },
+
+    // Cerrar el modal
     closeModal() {
+      console.log("Cerrando el modal...");
       this.selectedEvent = null;
     },
+
+    // Formatear fecha
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
+    },
+
+    // Formatear hora
+    formatTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    },
+  },
+  mounted() {
+    console.log("Componente montado. Intentando obtener el ID del usuario...");
+    this.user.id = this.getUserIdFromToken();
+
+    if (this.user.id) {
+      console.log("ID del usuario obtenido:", this.user.id);
+      console.log("Intentando obtener las inscripciones del usuario...");
+      this.fetchSubscriptions();
+    } else {
+      console.error("No se pudo obtener el ID del usuario.");
+    }
   },
 };
 </script>
