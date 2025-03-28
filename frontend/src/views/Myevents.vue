@@ -3,6 +3,7 @@
     <div v-if="events.length === 0" class="no-events-message">
       <p>No tienes eventos registrados.</p>
     </div>
+    
     <div v-for="event in events" :key="event.id" class="conference-card">
       <div class="event-image-container">
         <img :src="event.image_url" alt="Evento" class="event-image" />
@@ -20,7 +21,27 @@
         </div>
       </div>
     </div>
+
   </div>
+<div class="pagination">
+  <button 
+    v-if="prevPageUrl" 
+    @click="changePage(prevPageUrl)" 
+    class="btn-pagination">
+    « Anterior
+  </button>
+
+  <span class="pagination-info">
+    Página {{ currentPage }} de {{ lastPage }}
+  </span>
+
+  <button 
+    v-if="nextPageUrl" 
+    @click="changePage(nextPageUrl)" 
+    class="btn-pagination">
+    Siguiente »
+  </button>
+</div>
 </template>
 
 <script>
@@ -30,18 +51,27 @@ export default {
   data() {
     return {
       events: [],
+      currentPage: 1,
+      lastPage: 1,
+      nextPageUrl: null,
+      prevPageUrl: null,
     };
   },
   methods: {
-    async fetchEvents() {
+    async fetchEvents(page = 1) {
       try {
         const userId = localStorage.getItem('user_id');
         if (!userId) {
           console.error('No se encontró user_id en el localStorage.');
           return;
         }
-        const response = await axios.get(`http://127.0.0.1:8000/api/events/myevents/${userId}`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/events/myevents/${userId}?page=${page}`);
+        
         this.events = response.data.data;
+        this.currentPage = response.data.current_page;
+        this.lastPage = response.data.last_page;
+        this.nextPageUrl = response.data.next_page_url;
+        this.prevPageUrl = response.data.prev_page_url;
       } catch (error) {
         console.error('Error al obtener eventos:', error);
       }
@@ -52,6 +82,12 @@ export default {
     },
     deleteEvent(eventId) {
       console.log(`Eliminar evento con ID: ${eventId}`);
+    },
+    changePage(url) {
+      if (url) {
+        const page = new URL(url).searchParams.get("page");
+        this.fetchEvents(page);
+      }
     }
   },
   mounted() {
@@ -59,7 +95,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .events-container {
   display: grid;
@@ -239,5 +274,62 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 0 10px rgba(255, 233, 0, 0.5);
 }
+
+
+.pagination {
+  margin: 3rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.pagination span {
+  font-size: 1.2rem;
+  color: #ddd;
+  font-family: 'Hiragino Sans', sans-serif;
+}
+
+.btn-pagination {
+  background: #01569a; 
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #ffe900;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-pagination::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 233, 0, 0.3); 
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-pagination:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.btn-pagination:hover {
+  background: #024077;
+  color: #ffe900;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 233, 0, 0.5);
+}
+
+
 </style>
 
