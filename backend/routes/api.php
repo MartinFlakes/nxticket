@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/event_registration/{eventId}', [RegistrationController::class, 'event_registration']);
 });
 
+Route::get('/user/myevents/{idUser}', [RegistrationController::class, 'getUserEventsRegistration']);
+
 Route::get('/events', [EventController::class, 'events']);
 Route::get('/events/host/{hostId}', [EventController::class, 'eventsByHost']);
 Route::get('/events/title/{title}', [EventController::class, 'eventsByTitle']);

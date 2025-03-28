@@ -34,4 +34,9 @@ class RegistrationController extends Controller
 
         return response()->json($registration);
     }
+
+    public function getUserEventsRegistration($idUser){
+        $userEventsRegistration = $this->registrationService->getUserRegistration($idUser);
+        return response()->json($userEventsRegistration);
+    }
 }
