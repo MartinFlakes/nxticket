@@ -93,4 +93,14 @@ class EventService
         }
     }
 
+    public function deleteEvent($id)
+    {
+        $event = Event::find($id);
+        if ($event) {
+            $event->delete();
+            return response()->json(['success' => true, 'message' => 'Event deleted successfully'], 200);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Event not found'], 404);
+        }
+    }
 }

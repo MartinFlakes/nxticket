@@ -38,4 +38,5 @@ Route::get('/events/myevents/{useId}',[EventController::class, 'eventsByUser']);
 Route::get('/categories',[EventController::class, 'getAllCategories']);
 
 Route::post('/events/create', [EventController::class, 'createEvent']);
+Route::delete('/events/delete/{id}', [EventController::class, 'deleteEvent']);
 Route::get('/venues', [VenueController::class, 'getVenues']);

@@ -59,5 +59,10 @@ class EventController extends Controller
         $event = $this->eventService->createEvent($request);
         return response()->json($event, 201);
     }
-
+    
+    public function deleteEvent($id)
+    {
+        $event = $this->eventService->deleteEvent($id);
+        return $event;
+    }
 }
