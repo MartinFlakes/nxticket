@@ -126,7 +126,7 @@ export default {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
 
-        alert(`Evento "${response.data.title}" registrado con éxito!`);
+        alert(`Evento registrado con éxito!`);
         this.$router.push('/myevents');
       } catch (error) {
         console.error('Error al registrar el evento:', error);
