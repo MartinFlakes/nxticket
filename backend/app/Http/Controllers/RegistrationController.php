@@ -24,7 +24,7 @@ class RegistrationController extends Controller
 
         $user = $request->user();
         if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'No has iniciado sesión'], 401);
         }
 
         $registration = $this->registrationService->register([
