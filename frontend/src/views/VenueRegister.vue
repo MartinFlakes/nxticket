@@ -105,7 +105,7 @@
     max-width: 600px;
     margin: 0 auto;
     padding: 2rem;
-    background-color: #f9f9f9;
+    background: linear-gradient(135deg, #01569a, #050517); /* #01569a como principal */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }

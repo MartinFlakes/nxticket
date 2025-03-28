@@ -36,7 +36,7 @@
 
       <!-- Espacio y Capacidad -->
       <section class="form-section">
-        <h2>Espacio y Capacidad</h2>
+        <h2>Espacio </h2>
         <div class="form-row">
           <div class="form-group">
             <label for="category">Categoría</label>
@@ -84,7 +84,7 @@ export default {
         start_date: '',
         end_date: '',
         imagePreview: null,
-        user_id: 1, // Usuario fijo
+        user_id: null, // El user_id ahora será dinámico
       },
       categories: [],
       venues: [],
@@ -94,6 +94,16 @@ export default {
   methods: {
     async registerEvent() {
       try {
+        // Obtener el user_id desde localStorage
+        const userId = localStorage.getItem('user_id');
+        
+        if (!userId) {
+          alert('Usuario no encontrado. Inicia sesión.');
+          return;
+        }
+
+        this.event.user_id = userId; // Asignar el user_id dinámicamente
+
         const formData = new FormData();
         formData.append('title', this.event.title);
         formData.append('description', this.event.description);
@@ -147,6 +157,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 /* Importación de fuentes */

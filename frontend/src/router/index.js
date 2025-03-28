@@ -9,9 +9,9 @@ import Registerpageevent from '@/views/Registerpage.vue';
 import EventCategory from '@/views/EventCategory.vue';
 import PageEvent from '@/views/PageEvent.vue';
 import Myevents from '@/views/Myevents.vue';
-import AccountView from '@/views/Account.vue';  // Ruta para la vista de cuenta
-import VenueRegister from '@/views/VenueRegister.vue'; // Importar la vista de crear lugar
-import { isAuthenticated, isAdmin } from '@/services/authService';  
+import AccountView from '@/views/Account.vue';
+import VenueRegister from '@/views/VenueRegister.vue';
+import { isAuthenticated, isAdmin } from '@/services/authService';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,31 +64,31 @@ const router = createRouter({
       path: '/event-register',
       name: 'event-register',
       component: Registerevent,
-      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+      meta: { requiresAuth: true, requiresAdmin: true },  
     },
     {
       path: '/event-pageregister',
       name: 'event-pageregister',
       component: Registerpageevent,
-      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+      meta: { requiresAuth: true, requiresAdmin: true },  
     },
     {
       path: '/myevents',
       name: 'myevents',
       component: Myevents,
-      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+      meta: { requiresAuth: true, requiresAdmin: true },  
     },
     {
-      path: '/account',  // Ruta para la página de cuenta
+      path: '/account',
       name: 'account',
       component: AccountView,
-      meta: { requiresAuth: true },  // Requiere autenticación
+      meta: { requiresAuth: true },
     },
     {
-      path: '/venue-register',  // Ruta para la página de crear lugar
+      path: '/venue-register',
       name: 'venue-register',
       component: VenueRegister,
-      meta: { requiresAuth: true, requiresAdmin: true },  // Solo admins
+      meta: { requiresAuth: true, requiresAdmin: true },
     }
   ],
 });
@@ -96,23 +96,25 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   console.log(`Intentando acceder a: ${to.fullPath}`);
 
-  // Si ya está autenticado y trata de ir al login, redirigirlo al /user
   if (to.name === 'login' && isAuthenticated()) {
-    console.log('Ya estás autenticado, redirigiendo a /user');
-    return next({ name: 'user' }); // Evitar que vuelva al login
+    console.log('Ya estás autenticado, redirigiendo a /');
+    return next({ name: '' });
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Si no está autenticado, redirigirlo al login
     if (!isAuthenticated()) {
       console.log('No autenticado, redirigiendo al login...');
       return next({ name: 'login', query: { redirect: to.fullPath } });
     }
 
-    // Si es admin y no tiene permisos de admin
+    if (to.name === 'user' && isAdmin()) {
+      console.log('Los administradores no pueden acceder a esta ruta. Redirigiendo a /ome');
+      return next({ name: '' });
+    }
+
     if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin()) {
       console.log('Acceso denegado. Se requiere rol de administrador.');
-      return next({ name: 'landing' });
+      return next({ name: '' });
     }
 
     console.log('Autenticado, permitiendo acceso...');

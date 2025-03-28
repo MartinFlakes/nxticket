@@ -4,31 +4,33 @@
       <h1>Bienvenido a NxTicket</h1>
       <p class="subtitle">Descubre conferencias y eventos exclusivos.</p>
       <div class="buttons">
-        <!-- Mostrar solo si no hay token en el localStorage -->
         <router-link v-if="!isLoggedIn" to="/login" class="btn btn-login">Iniciar Sesión</router-link>
         <router-link v-if="!isLoggedIn" to="/login?signup=true" class="btn btn-register">Registrarse</router-link>
       </div>
     </header>
 
     <section class="conferences-grid">
-      <div v-for="event in eventsData.data" :key="event.id" 
-           :class="['conference-item', event.size]">
-        <img :src="event.imag" :alt="event.title" class="conference-image">
-        <div class="conference-details">
-          <h3>{{ event.title }}</h3>
-          <div class="conf-date">{{ formatDate(event.start_date) }} -  {{formatDate(event.end_date) }}</div>
-          <p>{{ event.description }}</p>
+      <div v-for="event in eventsData.data" :key="event.id" :class="['conference-item', event.size]">
+  <img :src="event.image_url || 'default-image.jpg'" :alt="event.title" class="conference-image">
+  <div class="conference-details">
+    <h3>{{ event.title }}</h3>
+    <div class="conf-date">{{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}</div>
+    <p>{{ event.description }}</p>
 
-          <p>
-            <strong>Anfitriones:</strong>
-            <span v-for="(host, index) in event.hosts" :key="host.id">
-              {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
-            </span>
-          </p>
-          <router-link v-if="isLoggedIn" to="/events/inscribe" class="conf-btn">Inscribirse</router-link>
-          <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
-        </div>
-      </div>
+    <p>
+      <strong>Anfitriones:</strong>
+      <span v-for="(host, index) in event.hosts" :key="host.id">
+        {{ host.name }}<span v-if="index < event.hosts.length - 1">, </span>
+      </span>
+    </p>
+    <router-link v-if="isLoggedIn" to="/events/inscribe" class="conf-btn">Inscribirse</router-link>
+    <router-link v-else to="/login" class="conf-btn">Iniciar sesión para inscribirse</router-link>
+  </div>
+</div>
+
+<!-- Depuración -->
+{{ event }} <!-- Agrega esta línea para ver todos los datos del evento -->
+
     </section>
 
     <!-- Paginación -->
@@ -55,6 +57,18 @@
 import { ref } from "vue";
 import axios from "axios";
 
+const getImageUrl = (imagePath) => {
+  const baseUrl = "http://127.0.0.1:8000/storage/"; 
+  console.log('Image Path:', imagePath);  // Verifica si el valor es correcto
+  if (imagePath && imagePath !== 'default-image.jpg') {
+    return `${baseUrl}${imagePath}`;
+  } else {
+    return "default-image.jpg";
+  }
+};
+
+
+
 // Estado para almacenar los eventos y la paginación
 const eventsData = ref({
   data: [],
@@ -67,15 +81,20 @@ const eventsData = ref({
 // Verificar si el usuario está logueado (si existe el token)
 const isLoggedIn = ref(localStorage.getItem("access_token") !== null);
 
-// Función para obtener los eventos de la API
 const fetchEvents = async (url = "http://127.0.0.1:8000/api/events?page=1") => {
   try {
     const response = await axios.get(url);
+    console.log('Response from API:', response.data); // Verifica toda la respuesta
+    // Agregar log para ver la estructura de cada evento
+    response.data.data.forEach(event => {
+      console.log('Event:', event); // Log de cada evento
+    });
     eventsData.value = response.data;
   } catch (error) {
     console.error("Error fetching events:", error);
   }
 };
+
 
 // Formatear fecha
 const formatDate = (dateString) => {
@@ -86,6 +105,7 @@ const formatDate = (dateString) => {
 // Llamada inicial para cargar los eventos
 fetchEvents();
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&family=Hiragino+Sans:wght@300;400;500&display=swap');
@@ -100,7 +120,7 @@ fetchEvents();
   font-family: 'Kanit', sans-serif;
   position: relative;
   overflow: hidden;
-  margin-top: 160px; /* Espacio para header y navbar fijos */
+  margin-top: 100px; /* Espacio para header y navbar fijos */
 }
 
 /* Fondo decorativo */
@@ -263,15 +283,14 @@ fetchEvents();
 
 .conference-image {
   width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 14px 14px 0 0;
-  transition: transform 0.3s ease;
+  height: auto;
+  max-height: 300px; 
+  object-fit: contain; 
+  border-radius: 8px; 
+  display: block; 
+  margin: 0 auto; 
 }
 
-.conference-item:hover .conference-image {
-  transform: scale(1.05); /* Zoom sutil al hover */
-}
 
 .conference-details {
   padding: 1.5rem;
@@ -429,9 +448,7 @@ fetchEvents();
     padding: 1rem;
   }
 
-  .conference-image {
-    height: 180px;
-  }
+ 
 
   .conference-details h3 {
     font-size: 1.5rem;

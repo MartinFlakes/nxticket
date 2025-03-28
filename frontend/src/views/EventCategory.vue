@@ -6,8 +6,8 @@
       </div>
       <div v-else v-for="event in eventsData.data" :key="event.id" 
            :class="['conference-item', event.size]">
-        <img :src="event.imag" :alt="event.title" class="conference-image" />
-        <div class="conference-details">
+           <img :src="event.image_url || 'default-image.jpg'" :alt="event.title" class="conference-image">
+           <div class="conference-details">
           <h3>{{ event.title }}</h3>
           <div class="conf-date">
             {{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}
@@ -163,16 +163,13 @@ fetchEvents();
 
 .conference-image {
   width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 14px 14px 0 0;
-  transition: transform 0.3s ease;
+  height: auto;
+  max-height: 300px; 
+  object-fit: contain; 
+  border-radius: 8px; 
+  display: block; 
+  margin: 0 auto; 
 }
-
-.conference-item:hover .conference-image {
-  transform: scale(1.05); /* Zoom sutil al hover */
-}
-
 .conference-details {
   padding: 1.5rem;
   text-align: left;

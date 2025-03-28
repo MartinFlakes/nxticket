@@ -1,23 +1,22 @@
 <template>
   <div class="events-container">
+    <div v-if="events.length === 0" class="no-events-message">
+      <p>No tienes eventos registrados.</p>
+    </div>
     <div v-for="event in events" :key="event.id" class="conference-card">
-      <img :src="event.image" alt="Evento" class="event-image" />
-      <div class="event-details">
-        <h2 class="event-title">{{ event.nombre }}</h2>
-        <p class="event-description">{{ event.descripcion || 'Sin descripción disponible' }}</p>
+      <div class="event-image-container">
+        <img :src="event.image_url" alt="Evento" class="event-image" />
+      </div>
+      <div class="event-content">
+        <h2 class="event-title">{{ event.title }}</h2>
+        <p class="event-description">{{ event.description || 'Sin descripción disponible' }}</p>
         <div class="event-info">
-          <p><strong>Fecha:</strong> {{ formatFecha(event.fechaInicio) }} - {{ formatFecha(event.fechaFin) }}</p>
-          <p><strong>Ubicación:</strong> {{ event.ciudad }}, {{ event.estado }}</p>
-          <p><strong>Dirección:</strong> {{ event.direccion }}</p>
-          <p><strong>Categoría:</strong> {{ event.categoria }}</p>
-          <p><strong>Espacio:</strong> {{ event.lugar }} (Capacidad: {{ event.capacidad }})</p>
-          <p><strong>Asientos Disponibles:</strong> {{ event.asientos }}</p>
-          <p><strong>Filas:</strong> {{ event.filas }}</p>
-          <p><strong>Precio:</strong> ${{ event.precio }}</p>
+          <p><strong>Fecha:</strong> {{ formatFecha(event.start_date) }} - {{ formatFecha(event.end_date) }}</p>
+          <p><strong>Categoría:</strong> {{ event.categories.name }}</p>
         </div>
         <div class="event-actions">
-          <button class="edit-btn">Editar</button>
-          <button class="delete-btn">Eliminar</button>
+          <button class="edit-btn"><i class="fas fa-edit"></i> Editar</button>
+          <button class="delete-btn" @click="deleteEvent(event.id)"><i class="fas fa-trash-alt"></i> Eliminar</button>
         </div>
       </div>
     </div>
@@ -25,54 +24,38 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'ConferenceCard',
   data() {
     return {
-      events: [
-        {
-          id: 1,
-          nombre: "Concierto de Rock",
-          descripcion: "Un increíble concierto con las mejores bandas de rock.",
-          fechaInicio: "2025-07-01",
-          fechaFin: "2025-07-02",
-          ciudad: "Ciudad de México",
-          estado: "CDMX",
-          direccion: "Av. Reforma 123",
-          categoria: "Concierto",
-          lugar: "Auditorio Nacional",
-          capacidad: 5000,
-          asientos: 1000,
-          filas: 50,
-          precio: 800,
-          image: "https://picsum.photos/400/250"
-        },
-        {
-          id: 2,
-          nombre: "Feria del Libro",
-          descripcion: "Un evento con la mejor literatura y escritores reconocidos.",
-          fechaInicio: "2025-08-10",
-          fechaFin: "2025-08-15",
-          ciudad: "Guadalajara",
-          estado: "Jalisco",
-          direccion: "Expo Guadalajara",
-          categoria: "Cultural",
-          lugar: "Centro de Exposiciones",
-          capacidad: 3000,
-          asientos: 1200,
-          filas: 60,
-          precio: 200,
-          image: "https://picsum.photos/400/251"
-        },
-        
-      ]
+      events: [],
     };
   },
   methods: {
+    async fetchEvents() {
+      try {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+          console.error('No se encontró user_id en el localStorage.');
+          return;
+        }
+        const response = await axios.get(`http://127.0.0.1:8000/api/events/myevents/${userId}`);
+        this.events = response.data.data;
+      } catch (error) {
+        console.error('Error al obtener eventos:', error);
+      }
+    },
     formatFecha(fecha) {
       const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(fecha).toLocaleDateString('es-ES', opciones);
+    },
+    deleteEvent(eventId) {
+      console.log(`Eliminar evento con ID: ${eventId}`);
     }
+  },
+  mounted() {
+    this.fetchEvents();
   }
 };
 </script>
@@ -80,82 +63,181 @@ export default {
 <style scoped>
 .events-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+  gap: 2rem;
+  padding: 2rem;
   justify-content: center;
-  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .conference-card {
   display: flex;
+  flex-direction: column; 
   background: linear-gradient(135deg, #050517, #01569a);
   color: white;
-  padding: 1.5rem;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.conference-card:hover {
+  transform: scale(1.03);
+}
+
+.event-image-container {
+  width: 100%;
+  height: 200px;
   border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
-  align-items: center;
-  gap: 1.5rem;
-  max-width: 700px;
+  overflow: hidden;
+  margin-bottom: 1rem;
 }
 
 .event-image {
-  width: 180px;
-  height: 180px;
-  border-radius: 10px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.event-details {
+.event-content {
   flex: 1;
 }
 
 .event-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #ffe900;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .event-description {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #ccc;
   margin-bottom: 1rem;
+  line-height: 1.5;
 }
 
 .event-info p {
   font-size: 1rem;
   margin: 0.3rem 0;
+  color: #bbb;
 }
 
 .event-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.8rem;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 1rem;
 }
 
 .edit-btn, .delete-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
   border: none;
+  transition: background-color 0.3s ease;
+  width: 48%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .edit-btn {
-  background: #ffe900;
-  color: #050517;
+  display: inline-block;
+  background: #01569a; 
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ffffff;
+  border: 2px solid #ffe900;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-family: 'Kanit', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
 .delete-btn {
-  background: #d9534f;
-  color: white;
+  display: inline-block;
+  background: #01569a; 
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ffffff;
+  border: 2px solid #fe4a49  ;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-family: 'Kanit', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
-.edit-btn:hover {
-  background: #e6d100;
+.delete-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(254, 74, 73, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.delete-btn:hover::before {
+  width: 200px;
+  height: 200px;
 }
 
 .delete-btn:hover {
-  background: #c9302c;
+  background: #024077; 
+  color: #fe4a49  ;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 233, 0, 0.5);
+}
+
+
+
+.edit-btn {
+  display: inline-block;
+  background: #01569a; 
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ffffff;
+  border: 2px solid #ffe900;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-family: 'Kanit', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.edit-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 233, 0, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.edit-btn:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.edit-btn:hover {
+  background: #024077; 
+  color: #ffe900;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 233, 0, 0.5);
 }
 </style>
+

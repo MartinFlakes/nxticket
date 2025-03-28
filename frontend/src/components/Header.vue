@@ -14,14 +14,13 @@
                 </div>
             </div>
         </nav>
-        <!-- Agregar el Drawer aquí -->
         <Drawer ref="drawer" @logout="logout"/>
     </header>
 </template>
 
 <script>
 import { isAuthenticated, logoutUser } from '@/services/authService';
-import Drawer from '@/components/Drawer.vue'; // Importar el componente Drawer
+import Drawer from '@/components/Drawer.vue'; 
 
 export default {
   components: {
@@ -43,7 +42,7 @@ export default {
       this.isLoggedIn = isAuthenticated();
     },
     toggleDrawer() {
-      this.$refs.drawer.openDrawer(); // Llamar al método openDrawer del componente Drawer
+      this.$refs.drawer.openDrawer(); 
     },
     logout() {
       logoutUser();
