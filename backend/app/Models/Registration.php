@@ -16,6 +16,12 @@ class Registration extends Model
         'seat_id',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);

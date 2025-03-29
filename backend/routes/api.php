@@ -7,6 +7,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\ZoneController;
+use App\Http\Controllers\SeatController;
 
 // Rutas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/event_registration/{eventId}', [RegistrationController::class, 'event_registration']);
 });
 
+Route::get('/user/myevents/{idUser}', [RegistrationController::class, 'getUserEventsRegistration']);
+
 Route::get('/events', [EventController::class, 'events']);
 Route::get('/events/host/{hostId}', [EventController::class, 'eventsByHost']);
 Route::get('/events/title/{title}', [EventController::class, 'eventsByTitle']);
@@ -38,3 +41,6 @@ Route::get('/categories',[EventController::class, 'getAllCategories']);
 Route::post('/events/create', [EventController::class, 'createEvent']);
 Route::delete('/events/delete/{id}', [EventController::class, 'deleteEvent']);
 Route::get('/venues', [VenueController::class, 'getVenues']);
+
+//Obtener los asientos disponibles de un evento
+Route::get('/seats/{eventId}/{available?}', [SeatController::class, 'getSeatsByEvent']);
