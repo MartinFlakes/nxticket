@@ -25,7 +25,7 @@
       <button type="submit" class="submit-button">Registrar Lugar</button>
     </form>
 
-    <h2 v-if="venueCreated">Registrar Zona</h2>
+    <h2 v-if="venueCreated">Registrar Zonas</h2>
     <form @submit.prevent="submitZone" v-if="venueCreated">
       <div class="form-group">
         <label for="zone-name">Nombre de la Zona</label>
@@ -39,7 +39,10 @@
         <label for="zone-price">Precio de la Zona</label>
         <input type="number" step="0.01" id="zone-price" v-model="zone.price" required />
       </div>
-      <button type="submit" class="submit-button">Registrar Zona</button>
+      <div class="button-group">
+        <button type="button" class="submit-button" @click="submitZone">Agregar Otra Zona</button>
+        <button type="button" class="submit-button" @click="finalizeRegistration">Finalizar Registro</button>
+      </div>
     </form>
 
     <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
@@ -156,6 +159,14 @@ export default {
         this.errorMessage =
           error.response?.data?.message || "Hubo un error al registrar la zona. Por favor, intenta nuevamente.";
       }
+    },
+    finalizeRegistration() {
+      console.log("Finalizando registro...");
+      this.successMessage = "Registro completado. Redirigiendo a la página de eventos...";
+      this.errorMessage = null;
+
+      // Redirigir a la página de registro de eventos
+      this.$router.push("/event-register");
     },
   },
 };
