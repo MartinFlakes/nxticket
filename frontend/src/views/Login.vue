@@ -7,7 +7,7 @@
       <div class="login-right">
         <h2>{{ isSignUp ? 'Sign Up' : 'Sign In' }}</h2>
         <p class="subtitle">
-          {{ isSignUp ? 'Already have an account?' : 'New to NxTicket?' }} 
+          {{ isSignUp ? 'Already have an account?' : 'New to NxTicket?' }}
           <a href="#" @click.prevent="toggleForm">{{ isSignUp ? 'Sign In' : 'Sign Up' }}</a>
         </p>
 
@@ -35,14 +35,13 @@
           </div>
 
           <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
-          <button type="submit" class="btn-signin">
-            {{ isSignUp ? 'Register' : 'Sign In' }}
+          
+          <button type="submit" class="btn-signin" :disabled="loading">
+            {{ loading ? 'Loading...' : (isSignUp ? 'Register' : 'Sign In') }}
           </button>
+          
+          <div v-if="loading" class="loading-spinner"></div>
         </form>
-
-        <div v-if="user" class="welcome-user">
-          <p>Welcome, {{ user.name }}!</p>
-        </div>
       </div>
     </div>
   </div>
@@ -62,96 +61,60 @@ export default {
       showPassword: false,
       user: null,
       passwordError: '',
+      loading: false,
     };
   },
   methods: {
     async handleSubmit() {
+      this.loading = true;
       if (this.isSignUp) {
         await this.register();
       } else {
         await this.login();
       }
+      this.loading = false;
     },
 
     async register() {
       if (this.password.trim() !== this.password_confirmation.trim()) {
         this.passwordError = "Las contraseñas no coinciden.";
+        this.loading = false;
         return;
       }
 
       this.passwordError = '';
-      const userData = {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        password_confirmation: this.password_confirmation,
-      };
-
       try {
-        const response = await registerUser(userData);
-        const { access_token, user } = response;
-
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-
-        this.user = user;
-
-        const redirectPath = this.$route.query.redirect || '/';
-        this.$router.replace(redirectPath);
+        const response = await registerUser({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.password_confirmation,
+        });
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        this.user = response.user;
+        this.$router.replace(this.$route.query.redirect || '/');
       } catch (error) {
         alert(error || "Hubo un error al registrar.");
       }
     },
 
     async login() {
-  if (!this.email || !this.password) {
-    alert("Por favor ingresa tu correo y contraseña.");
-    return;
-  }
-
-  try {
-    const response = await loginUser({
-      email: this.email,
-      password: this.password,
-    });
-
-    const { access_token, user } = response;
-
-    if (!user.role_id) {
-      console.error("El usuario no tiene un role_id definido.");
-      alert("Hubo un problema con los datos del usuario. Contacta al administrador.");
-      return;
-    }
-
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('user', JSON.stringify(user));
-
-    this.user = user;
-
-    console.log("user.role_id:", user.role_id);
-
-    const redirectPath = this.$route.query.redirect || (user.role_id !== 'admin' ? '/' : '/admin/dashboard');
-    
-    console.log("Redirect path:", redirectPath);
-    
-    this.$router.replace(redirectPath);
-
-  } catch (error) {
-    alert(error || "Hubo un error en el inicio de sesión.");
-  }
-},
-
+      try {
+        const response = await loginUser({ email: this.email, password: this.password });
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        this.user = response.user;
+        this.$router.replace(this.$route.query.redirect || (response.user.role_id !== 'admin' ? '/' : '/admin/dashboard'));
+      } catch (error) {
+        alert(error || "Hubo un error en el inicio de sesión.");
+      }
+    },
 
     toggleForm() {
       this.isSignUp = !this.isSignUp;
       this.passwordError = '';
     },
-  },
-  mounted() {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-    }
   },
 };
 </script>
@@ -433,5 +396,19 @@ input:focus {
     padding: 1rem;
     font-size: 1rem;
   }
+}
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ffe900;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
